@@ -26,45 +26,53 @@ export default class SignUp extends Component {
   
   constructor(props){
       super(props);
-      
-      this.userChange = this.userChange.bind(this);
-      this.phoneChange = this.userChange.bind(this);
-      this.pwdChange = this.userChange.bind(this);
+    //   this.userChange = this.userChange.bind(this);
+    //   this.phoneChange = this.userChange.bind(this);
+    //   this.pwdChange = this.userChange.bind(this);
       this.state = {
-            userName: "",
-            phone: "",
-            pwd: "",
+            userName: '',
+            phone: '',
+            pwd: '',
+            conpwd: '',
         };
       }
   
 
-  userChange(inputTxt){
-      console.log("输入的内容",inputTxt);
-      this.setState({userName: inputTxt});
+//   userChange(inputTxt){
+//       console.log("输入的内容",inputTxt);
+//       this.setState({userName: inputTxt});
+//   }
+//   phoneChange(inputTxt){
+//       console.log("输入的内容",inputTxt);
+//       this.setState({phone: inputTxt});
+//   }
+//   pwdChange(inputTxt){
+//       console.log("输入的内容",inputTxt);
+//       this.setState({pwd: inputTxt});
+//   }
+  updateTextInput = (text, field) => {
+    const state = this.state
+    state[field] = text;
+    this.setState(state);
   }
-  phoneChange(inputTxt){
-      console.log("输入的内容",inputTxt);
-      this.setState({phone: inputTxt});
-  }
-  pwdChange(inputTxt){
-      console.log("输入的内容",inputTxt);
-      this.setState({pwd: inputTxt});
-  }
-
   
   createUser() {
-      s.initDB();
-      s.createTable();
-      var userData = [];
-      let user={
-          userName,
-          phone,
-          pwd,
+      if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd) {
+
+        s.initDB();
+        s.createTable();
+        //   var userData = [];
+        let user={
+            userName: this.state.userName,
+            phone: this.state.phone,
+            pwd: this.state.pwd,
+        }
+        //   userData.push(user)
+        s.insertData(this.userInfo, user)
+        s.closeDB();
       }
-      userData.push(user)
-      s.insertData(this.userInfo, userData)
-      s.closeDB();
-  }
+      //Todo
+   }
 
   render() {
     return (
@@ -79,7 +87,9 @@ export default class SignUp extends Component {
                     style={styles.inputA}
                     placeholder="请输入用户名"
                     placeholderTextColor="#fff"
-                    onChangeText={this.userChange}
+                    value={this.state.userName}
+                    // onChangeText={this.userChange}
+                    onChangeText={(text) => this.updateTextInput(text, 'userName')}
                     />
 
                     <Text style={styles.txtPhone}>手机号</Text>
@@ -87,7 +97,8 @@ export default class SignUp extends Component {
                     style={styles.inputA}
                     placeholder="请输入手机号"
                     placeholderTextColor="#fff"
-                    onChangeText={this.phoneChange}
+                    // onChangeText={this.phoneChange}
+                    onChangeText={(text) => this.updateTextInput(text, 'phone')}
                     />
 
                     <Text style={styles.txtPwd}>密码</Text>
@@ -96,7 +107,8 @@ export default class SignUp extends Component {
                     placeholder="请输入密码"
                     secureTextEntry={true}
                     placeholderTextColor="#fff"
-                    onChangeText={this.pwdChange}
+                    // onChangeText={this.pwdChange}
+                    onChangeText={(text) => this.updateTextInput(text, 'pwd')}
                     />
 
                     <Text style={styles.txtCon}>确认密码</Text>
@@ -105,8 +117,9 @@ export default class SignUp extends Component {
                     placeholder="请再次确认密码"
                     secureTextEntry={true}
                     placeholderTextColor="#fff"
+                    onChangeText={(text) => this.updateTextInput(text, 'conpwd')}
                     />
-                    <TouchableOpacity onPress={this.createUser}>
+                    <TouchableOpacity onPress={() => this.createUser()}>
                         <Text style={styles.buttonCreate}>创建账户</Text>
                     </TouchableOpacity>
                 </View>
