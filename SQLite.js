@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import SQLiteStorage from 'react-native-sqlite-storage';
 
 SQLiteStorage.DEBUG(true);
-var database_name = "Users/xit/Desktop/AwesomeProject/Database/AwesomeProject.db";//数据库文件
+var database_name = "AwesomeProject.db";//数据库文件
 var database_version = "1.0";//版本号
 var database_displayname = "MySQLite";
 var database_size = -1;

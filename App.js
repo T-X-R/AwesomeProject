@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, StatusBar, Button } from 'react-native';
 import LoginScreen from "./src/LoginScreen";
 import RegistrationScreen from "./src/RegistrationScreen";
 import StartUpPage from "./src/StartUpPage";
+import Home from "./src/Home";
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,9 +15,10 @@ const Stack = createStackNavigator();
 function MyStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={StartUpPage} options={{headerShown: false}}/>
+      <Stack.Screen name="Start" component={StartUpPage} options={{headerShown: false}}/>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Sign Up" component={RegistrationScreen} />
+      <Stack.Screen name="Home" component={Home} />
     </Stack.Navigator>
   );
 }
