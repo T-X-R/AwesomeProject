@@ -6,8 +6,10 @@ import {
     FlatList,
     TextInput,
     Button,
+    ScrollView,
     TouchableOpacity,
     ActivityIndicator,
+    RefreshControl,
 } from 'react-native';
 import { HOT } from '../src/api';
 // import SQLite from '../SQLite';
@@ -15,74 +17,90 @@ import { HOT } from '../src/api';
 // var db;
 
 export default class Home extends Component {
+    
     constructor(props){
-    super(props);
-    this.state ={
-        isLoading: true,
-        dataSource: [],
+        super(props);
+        this.state = {
+            isLoading: true,
+            dataSource: [],
         }
-  }
+        // this.fetchData = this.fetchData.bind(this);
+    } 
 
-//   componentDidMount(){
-//     return fetch('https://music.163.com')
-//       .then((response) => response.json())
-//       .then((responseJson) => {
-//         this.setState({
-//           isLoading: false,
-//           dataSource: responseJson,
-//         }, function(){
+componentDidMount() {
+    this.fetchData();
+}
 
-//       });
-//       }).catch((error) =>{
-//         console.error(error);
-//       });
-//   }
-  
+async fetchData() {
+    try {
+        const res = await fetch(HOT, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        const parsedResult = await res.json();
+        let constantData = parsedResult.list.artists;
+        // debugger
+        // console.log(parsedResult);
+        // for (var i = 0; i < 100; i++) {
+        //     let constantData = parsedResult.list.artists[i].name;
+        // }
+        // debugger
 
-componentWillMount() {
-        this.fetchData();
+        this.setState({
+            isLoading: false,
+            dataSource: constantData, 
+        });
+    } catch (err) {
+        alert(err);
+        console.error(err);
     }
-    fetchData = () => {
-        (
-            async () => {
-                try {
-                    const res = await fetch('https://music.163.com');
-                    const { dataSource } = await res.json();
-                    // const res = await fetch('http://192.168.3.69:3004/event');
-                    // const event = await res.json();
-                    console.log(dataSource);
-                    this.setState({dataSource, isLoading: false});
-                } catch (err) {
-                    alert(err);
-                    console.error(err);
-                }
-            }
-        )();
-    };
+  };
 
-
+  _onRefresh(){
+		this.setState({refreshing: true});
+		this.fetchData().then(() =>{
+			this.setState({refreshing: false})
+		});
+	}
 
   render(){
 
-    if(this.state.isLoading){
-      return(
-        <View style={{flex: 1, padding: 20}}>
-          <ActivityIndicator/>
-        </View>
-      )
-    }
-
+    // if(this.state.isLoading){
+    //   return(
+    //     <View style={{flex: 1, padding: 20}}>
+    //       <ActivityIndicator/>
+    //     </View>
+    //   )
+    // }
+    var i = 0;
     return(
-      <View style={{flex: 1, paddingTop:20}}>
-        <FlatList
-          data={this.state.dataSource}
-        //   renderItem={({item}) => <Text>{item.title}, {item.releaseYear}</Text>}
-          keyExtractor={(item, index) => item.id}
-        />
-      </View>
+        
+        <View style={styles.container}>
+            <ScrollView style={styles.scroll}>
+                {/* <Text style={styles.text}>{JSON.stringify(this.state.dataSource)}</Text> */}
+                <FlatList
+                    data={this.state.dataSource}
+                    renderItem={({item})=>
+                    <View>
+                        <Text style={styles.text}>{item.name}</Text>
+                        {/* <Text style={styles.text}>{item.id}</Text> */}
+                    </View>
+                    }
+                    refreshControl={
+                        <RefreshControl
+                        refreshing = {this.state.refreshing}
+                        onRefresh={this._onRefresh.bind(this)}
+                        />
+                    }
+                />
+            </ScrollView>
+        </View>
+        
     );
-  }
-
+   
+  } 
 }
 
 
@@ -90,9 +108,15 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection:'column',
-      alignItems: 'center',
-      justifyContent: 'center',
+    //   alignItems: 'center',
+    //   justifyContent: 'center',
       backgroundColor: '#1A2225',
     },
-    
+    text:{
+        color: 'white',
+        fontSize: 15,
+    },
+    scroll:{
+        flex: 1,
+    }
 })

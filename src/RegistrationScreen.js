@@ -26,9 +26,6 @@ export default class SignUp extends Component {
   
   constructor(props){
       super(props);
-    //   this.userChange = this.userChange.bind(this);
-    //   this.phoneChange = this.userChange.bind(this);
-    //   this.pwdChange = this.userChange.bind(this);
       this.state = {
             userName: '',
             phone: '',
@@ -37,19 +34,6 @@ export default class SignUp extends Component {
         };
       }
   
-
-//   userChange(inputTxt){
-//       console.log("输入的内容",inputTxt);
-//       this.setState({userName: inputTxt});
-//   }
-//   phoneChange(inputTxt){
-//       console.log("输入的内容",inputTxt);
-//       this.setState({phone: inputTxt});
-//   }
-//   pwdChange(inputTxt){
-//       console.log("输入的内容",inputTxt);
-//       this.setState({pwd: inputTxt});
-//   }
   updateTextInput = (text, field) => {
     const state = this.state
     state[field] = text;
