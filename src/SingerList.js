@@ -16,7 +16,7 @@ import { HOT } from '../src/api';
 // var s = new SQLite();
 // var db;
 
-export default class Home extends Component {
+export default class SingerList extends Component {
     
     constructor(props){
         super(props);
@@ -24,7 +24,6 @@ export default class Home extends Component {
             isLoading: true,
             dataSource: [],
         }
-        // this.fetchData = this.fetchData.bind(this);
     } 
 
 componentDidMount() {
@@ -42,12 +41,6 @@ async fetchData() {
         const parsedResult = await res.json();
         let constantData = parsedResult.list.artists;
         // debugger
-        // console.log(parsedResult);
-        // for (var i = 0; i < 100; i++) {
-        //     let constantData = parsedResult.list.artists[i].name;
-        // }
-        // debugger
-
         this.setState({
             isLoading: false,
             dataSource: constantData, 
@@ -66,17 +59,7 @@ async fetchData() {
 	}
 
   render(){
-
-    // if(this.state.isLoading){
-    //   return(
-    //     <View style={{flex: 1, padding: 20}}>
-    //       <ActivityIndicator/>
-    //     </View>
-    //   )
-    // }
-    var i = 0;
     return(
-        
         <View style={styles.container}>
             <ScrollView style={styles.scroll}>
                 {/* <Text style={styles.text}>{JSON.stringify(this.state.dataSource)}</Text> */}
@@ -118,5 +101,5 @@ const styles = StyleSheet.create({
     },
     scroll:{
         flex: 1,
-    }
+    },
 })

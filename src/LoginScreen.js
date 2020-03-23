@@ -39,7 +39,7 @@ export default class LoginScreen extends Component {
                         placeholder="请输入密码" 
                         placeholderTextColor = "#fff">
                     </TextInput>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate("Home")}>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate("My Home")}>
                         <Text style={styles.buttonLogin}>登录</Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>
