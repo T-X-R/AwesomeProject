@@ -20,15 +20,51 @@ class MusicElement extends Component {
         super(props);
         this.state = {
             isSelect: false,
+            checkUrl: false,
         }
-
-        this.selectMusic = this.selectMusic.bind(this);
+        // this.selectMusic = this.selectMusic.bind(this);
     }
 
-    selectMusic = () => {
-        const isSelect = !this.state.isSelect;
-        this.setState({ isSelect });
+    // selectMusic = () => {
+    //     const isSelect = !this.state.isSelect;
+    //     this.setState({ isSelect });
+    // }
+
+    selectMusic(){
+        if(this.state.isSelect == false){
+            this.setState({
+                isSelect: true,
+            });
+        } else{
+            this.setState({
+                isSelect: false,
+            });
+        }
     }
+    
+    async checkMusic(id){
+        this.selectMusic();
+        let url = CHECK_MUSIC + id;
+        try{
+            const res2 = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            const parsedResult2 = await res2.json();
+            // debugger
+            let constantData2 = parsedResult2.success;
+            this.setState({
+                checkUrl: constantData2,
+            });
+            // debugger
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        }
+        
+    };
 
     render() {
         const item = this.props.item;
@@ -36,12 +72,14 @@ class MusicElement extends Component {
         return (
             <View>
                 <TouchableHighlight
-                    onPress={this.selectMusic}
+                    onPress={() => this.checkMusic(item.id)}
                 >
                     <View>
                         <Text style={styles.text}>{item.id}</Text>
                         <Text style={styles.text}>{item.name}</Text>
-                        <Text style={styles.text}>{this.state.isSelect}</Text>
+                        <Text style={styles.text}>{item.artists.name}</Text>
+                        <Text style={styles.text}>音乐是否可用：{JSON.stringify(this.state.checkUrl)}</Text>
+                        <Text style={styles.text}>选中状态：{JSON.stringify(this.state.isSelect)}</Text>
                         <Text></Text>
                     </View>
                 </TouchableHighlight>
@@ -56,7 +94,6 @@ export default class Music extends Component{
         this.state = {
             isLoading: true,
             musicId: [],
-            checkUrl: [],
             musicName: '',
         }
     }
