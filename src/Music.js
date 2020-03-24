@@ -27,9 +27,9 @@ class MusicElement extends Component {
 
     selectMusic = () => {
         if (this.state.isSelect == false) {
-            this.state.isSelect == true;
+            this.setState({ isSelect: true });
         } else {
-            this.state.isSelect == false;
+            this.setState({ isSelect: false });
         }
     }
 
