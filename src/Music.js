@@ -36,7 +36,7 @@ class MusicElement extends Component {
         return (
             <View>
                 <TouchableHighlight
-                    onPress={() => this.selectMusic()}
+                    onPress={this.selectMusic}
                 >
                     <View>
                         <Text style={styles.text}>{item.id}</Text>
