@@ -21,11 +21,35 @@ class MusicElement extends Component {
         this.state = {
             isSelect: false,
         }
-        
+
+        this.selectMusic = this.selectMusic.bind(this);
+    }
+
+    selectMusic = () => {
+        if (this.state.isSelect == false) {
+            this.state.isSelect == true;
+        } else {
+            this.state.isSelect == false;
+        }
     }
 
     render() {
-        return null
+        const item = this.props.item;
+
+        return (
+            <View>
+                <TouchableHighlight
+                    onPress={() => this.selectMusic()}
+                >
+                    <View>
+                        <Text style={styles.text}>{item.id}</Text>
+                        <Text style={styles.text}>{item.name}</Text>
+                        <Text style={styles.text}>{this.state.isSelect}</Text>
+                        <Text></Text>
+                    </View>
+                </TouchableHighlight>
+            </View>
+        )
     }
 }
 
@@ -60,14 +84,6 @@ export default class Music extends Component{
     //     this.searchMusic();
     // }
     
-
-    selectMusic = () => {
-        if (this.state.isSelect == false) {
-            this.state.isSelect == true;
-        } else {
-            this.state.isSelect == false;
-        }
-    }
 
     async searchMusic(){
         let url = SEARCH_MUSIC + this.state.musicName;
@@ -114,22 +130,7 @@ export default class Music extends Component{
                 </View>
                 <FlatList
                     data={this.state.musicId}
-                    renderItem={({item})=>
-                        <View>
-                            <TouchableHighlight
-                                onPress={() => this.selectMusic()}
-                            >
-                                <View>
-                                    
-                                    <Text style={styles.text}>{item.id}</Text>
-                                    <Text style={styles.text}>{item.name}</Text>
-                                    <Text style={styles.text}>{this.state.isSelect}</Text>
-                                    <MusicElement />
-                                    <Text></Text>
-                                </View>
-                            </TouchableHighlight>    
-                        </View>
-                    }
+                    renderItem={({item}) => <MusicElement item={item} />}
                 />
             </View>
             
