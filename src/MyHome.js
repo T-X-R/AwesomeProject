@@ -33,6 +33,11 @@ export default class MyHome extends Component {
                 >
                     <Text style={styles.button}>我的音乐</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("Music Player")}
+                >
+                    <Text style={styles.button}>音乐播放器</Text>
+                </TouchableOpacity>
             </View>
         );
     }

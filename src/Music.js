@@ -14,6 +14,7 @@ import {
 // import { fetchId } from '../src/GetId';
 import { SEARCH_MUSIC } from '../src/api';
 import { CHECK_MUSIC } from '../src/api';
+import MyTextInput from '../src/MyTextInput';
 
 class MusicElement extends Component {
     constructor(props){
@@ -41,9 +42,14 @@ class MusicElement extends Component {
             });
         }
     }
+
+    componentDidMount() {
+        const item = this.props.item;
+        this.checkMusic(item.id);
+    }
     
     async checkMusic(id){
-        this.selectMusic();
+        // this.selectMusic();
         let url = CHECK_MUSIC + id;
         try{
             const res2 = await fetch(url, {
@@ -53,36 +59,37 @@ class MusicElement extends Component {
             }
             });
             const parsedResult2 = await res2.json();
-            // debugger
             let constantData2 = parsedResult2.success;
             this.setState({
                 checkUrl: constantData2,
             });
-            // debugger
         } catch (err) {
             alert(err);
             console.error(err);
         }
-        
     };
+
+    playMusic(){
+        
+    }
 
     render() {
         const item = this.props.item;
 
         return (
             <View>
-                <TouchableHighlight
+                {/* <TouchableHighlight
                     onPress={() => this.checkMusic(item.id)}
-                >
+                > */}
                     <View>
                         <Text style={styles.text}>{item.id}</Text>
                         <Text style={styles.text}>{item.name}</Text>
-                        <Text style={styles.text}>{item.artists.name}</Text>
+                        {/* <Text style={styles.text}>{item.artists.name}</Text> */}
                         <Text style={styles.text}>音乐是否可用：{JSON.stringify(this.state.checkUrl)}</Text>
                         <Text style={styles.text}>选中状态：{JSON.stringify(this.state.isSelect)}</Text>
                         <Text></Text>
                     </View>
-                </TouchableHighlight>
+                {/* </TouchableHighlight> */}
             </View>
         )
     }
@@ -129,7 +136,6 @@ export default class Music extends Component{
             }
             });
             const parsedResult = await res.json();
-            // debugger
             let constantData = parsedResult.result.songs;
             this.setState({
                 isLoading: false,

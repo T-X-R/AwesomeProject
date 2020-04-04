@@ -8,6 +8,7 @@ import SingerList from "./src/SingerList";
 import PlayList from "./src/PlayList";
 import Fans from "./src/Fans";
 import Music from "./src/Music";
+import MusicPlayer from "./src/MusicPlayer";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -26,6 +27,7 @@ function MyStack() {
       <Stack.Screen name="Play List" component={PlayList} />
       <Stack.Screen name="Fans" component={Fans} />
       <Stack.Screen name="Music" component={Music} />
+      <Stack.Screen name="Music Player" component={MusicPlayer} />
     </Stack.Navigator>
   );
 }
