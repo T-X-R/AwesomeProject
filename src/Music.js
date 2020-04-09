@@ -14,7 +14,7 @@ import {
 // import { fetchId } from '../src/GetId';
 import { SEARCH_MUSIC } from '../src/api';
 import { CHECK_MUSIC } from '../src/api';
-import MyTextInput from '../src/MyTextInput';
+// import MyTextInput from '../src/MyTextInput';
 
 class MusicElement extends Component {
     constructor(props){
@@ -24,6 +24,7 @@ class MusicElement extends Component {
             checkUrl: false,
         }
         // this.selectMusic = this.selectMusic.bind(this);
+        // this.playMusic=this.playMusic.bind(this);
     }
 
     // selectMusic = () => {
@@ -47,6 +48,16 @@ class MusicElement extends Component {
         const item = this.props.item;
         this.checkMusic(item.id);
     }
+
+    playMusic(id){
+        if(this.state.checkUrl == true){
+            this.props.navigation.navigate("Music Player",{
+                params: id,
+            });
+        } else{
+            alert('没有版权!');
+        }
+    }
     
     async checkMusic(id){
         // this.selectMusic();
@@ -69,18 +80,17 @@ class MusicElement extends Component {
         }
     };
 
-    playMusic(){
-        
-    }
 
     render() {
         const item = this.props.item;
 
         return (
             <View>
-                {/* <TouchableHighlight
-                    onPress={() => this.checkMusic(item.id)}
-                > */}
+                {/* <TouchableOpacity onPress = {() =>
+                    this.props.navigation.navigate("Music Player",{
+                    params: item.id,
+                })}> */}
+                <TouchableOpacity onPress = {()=> this.playMusic(item.id)}>
                     <View>
                         <Text style={styles.text}>{item.id}</Text>
                         <Text style={styles.text}>{item.name}</Text>
@@ -89,7 +99,7 @@ class MusicElement extends Component {
                         <Text style={styles.text}>选中状态：{JSON.stringify(this.state.isSelect)}</Text>
                         <Text></Text>
                     </View>
-                {/* </TouchableHighlight> */}
+                </TouchableOpacity>
             </View>
         )
     }
@@ -141,12 +151,11 @@ export default class Music extends Component{
                 isLoading: false,
                 musicId: constantData,
             });
-            // debugger
+            
         } catch (err) {
             alert(err);
             console.error(err);
         }
-        
     };
 
     
@@ -170,7 +179,7 @@ export default class Music extends Component{
                 </View>
                 <FlatList
                     data={this.state.musicId}
-                    renderItem={({item}) => <MusicElement item={item} />}
+                    renderItem={({item}) => <MusicElement item={item} navigation={this.props.navigation} />}
                 />
             </View>
             

@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import {
-    AppRegistry,
     StyleSheet,
-    Dimensions,
     Text,
     Image,
     View,
@@ -13,256 +11,72 @@ import {
     Animated,
     Easing
 } from 'react-native'
-var {width,height} = Dimensions.get('window');
 import Video from 'react-native-video'
-var lyrObj = []   // 存放歌词
+import { MUSIC_URL } from '../src/api';
+import { MUSIC_DETAIL } from '../src/api';
+import { MUSIC_LYRIC } from '../src/api';
 var myAnimate;
+var lyrObj = [];
  
  
-export default class MusicPlayer extends Component {
- 
-    constructor(props) {
+export default class MusicPlayer extends Component{
+    constructor(props){
         super(props);
-        this.spinValue = new Animated.Value(0)
+        this.spinValue = new Animated.Value(0);
+        this.player = ''
         this.state = {
-            songs: [],   //歌曲id数据源
-            playModel: 1,  // 播放模式  1:列表循环    2:随机    3:单曲循环
-            btnModel: require('../pic/play.png'), //播放模式按钮背景图
-            pic_small: '',    //小图
-            pic_big: '',      //大图
-            file_duration: 0,    //歌曲长度
-            song_id: '',     //歌曲id
-            title: '',       //歌曲名字
-            author: '',      //歌曲作者
-            file_link: '',   //歌曲播放链接
-            songLyr: [],     //当前歌词
-            sliderValue: 0,    //Slide的value
-            pause: false,       //歌曲播放/暂停
-            currentTime: 0.0,   //当前时间
-            duration: 0.0,     //歌曲时间
-            currentIndex: 0,    //当前第几首
-            isplayBtn: require('../pic/play-pause.png')  //播放/暂停按钮背景图
+            musicId: '1417453306',
+            musicUrl: '',
+            paused: false,
+            duration: 0.0,
+            slideValue: 0.0,
+            currentTime: 0.0,
+            currentIndex: 0,
+            playMode: 0,
+            playIcon: require('../pic/pause.png'),
+            lyric: [],
         }
     }
-    //上一曲
-    prevAction = (index) =>{
-        this.recover()
-        lyrObj = [];
-        if(index == -1){
-            index = this.state.songs.length - 1 // 如果是第一首就回到最后一首歌
-        }
-        this.setState({
-            currentIndex:index  //更新数据
-        })
-        this.loadSongInfo(index)  //加载数据
+
+    async componentWillMount() {
+        await this.fetchMusicUrl();
+        await this.fetchLyric();
+        this.spin(); 
     }
-    //下一曲
-    nextAction = (index) =>{
-        this.recover()
-        lyrObj = [];
-        if(index == 10){
-            index = 0 //如果是最后一首就回到第一首
-        }
-        this.setState({
-            currentIndex:index,  //更新数据
-        })
-        this.loadSongInfo(index)   //加载数据
-    }
-    //换歌时恢复进度条 和起始时间
-    recover = () =>{
-        this.setState({
-            sliderValue:0,
-            currentTime: 0.0
-        })
-    }
-    //播放模式 接收传过来的当前播放模式 this.state.playModel
-    playModel = (playModel) =>{
-        playModel++;
-        playModel = playModel == 4 ? 1 : playModel
-        //重新设置
-        this.setState({
-            playModel:playModel
-        })
-        //根据设置后的模式重新设置背景图片
-        if(playModel == 1){
-            this.setState({
-                btnModel:require('../pic/play.png'),
-            })
-        }else if(playModel ==  2){
-            this.setState({
-                btnModel:require('../pic/play.png'),
-            })
-        }else{
-            this.setState({
-                btnModel:require('../pic/play.png'),
-            })
-        }
-    }
-    //播放/暂停
-    playAction =() => {
-        this.setState({
-            pause: !this.state.pause
-        })
-        //判断按钮显示什么
-        if(this.state.pause == true){
-            this.setState({
-                isplayBtn:require('../pic/pause.png')
-            })
-        }else {
-            this.setState({
-                isplayBtn:require('../pic/play.png')
-            })
-        }
- 
-    }
-    //播放器每隔250ms调用一次
-    onProgress =(data) => {
-        let val = parseInt(data.currentTime)
-        this.setState({
-            sliderValue: val,
-            currentTime: data.currentTime
-        })
- 
-        //如果当前歌曲播放完毕,需要开始下一首
-        if(val == this.state.file_duration){
-            if(this.state.playModel == 1){
-                //列表 就播放下一首
-                this.nextAction(this.state.currentIndex + 1)
-            }else if(this.state.playModel == 2){
-                let  last =  this.state.songs.length //json 中共有几首歌
-                let random = Math.floor(Math.random() * last)  //取 0~last之间的随机整数
-                this.nextAction(random) //播放
-            }else{
-                //单曲 就再次播放当前这首歌曲
-                this.refs.video.seek(0) //让video 重新播放
-                _scrollView.scrollTo({x: 0,y:0,animated:false});
-            }
-        }
- 
-    }
-    //把秒数转换为时间类型
-    formatTime(time) {
-        // 71s -> 01:11
-        let min = Math.floor(time / 60)
-        let second = time - min * 60
+
+    formatMediaTime(duration) {
+        let min = Math.floor(duration / 60)
+        let second = duration - min * 60
         min = min >= 10 ? min : '0' + min
         second = second >= 10 ? second : '0' + second
         return min + ':' + second
     }
-    // 歌词
-    renderItem() {
-        // 数组
-        var itemAry = [];
-        for (var i = 0; i < lyrObj.length; i++) {
-            var item = lyrObj[i].txt
-            if (this.state.currentTime.toFixed(2) > lyrObj[i].total) {
-                //正在唱的歌词
-                itemAry.push(
-                    <View key={i} style={styles.itemStyle}>
-                        <Text style={{ color: 'blue' }}> {item} </Text>
-                    </View>
-                );
-                _scrollView.scrollTo({x: 0,y:(25 * i),animated:false});
-            }
-            else {
-                //所有歌词
-                itemAry.push(
-                    <View key={i} style={styles.itemStyle}>
-                        <Text style={{ color: 'red' }}> {item} </Text>
-                    </View>
-                )
-            }
-        }
- 
-        return itemAry;
+
+    setDuration(duration) {
+        this.setState({duration: duration.duration})
     }
-    // 播放器加载好时调用,其中有一些信息带过来
-    onLoad = (data) => {
-        this.setState({ duration: data.duration });
+
+    setTime(data) {
+        let sliderValue = parseInt(this.state.currentTime)
+        this.setState({
+            slideValue: sliderValue,
+            currentTime: data.currentTime
+        })
     }
- 
-    loadSongInfo = (index) => {
-        //加载歌曲
-        let songid =  this.state.songs[index]
-        let url = 'http://tingapi.ting.baidu.com/v1/restserver/ting?method=baidu.ting.song.play&songid=' + songid
-        fetch(url)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                let songinfo = responseJson.songinfo
-                let bitrate = responseJson.bitrate
-                this.setState({
-                    pic_small:songinfo.pic_small, //小图
-                    pic_big:songinfo.pic_big,  //大图
-                    title:songinfo.title,     //歌曲名
-                    author:songinfo.author,   //歌手
-                    file_link:bitrate.file_link,   //播放链接
-                    file_duration:bitrate.file_duration //歌曲长度
-                })
- 
-                //加载歌词
-                let url = 'http://tingapi.ting.baidu.com/v1/restserver/ting?method=baidu.ting.song.lry&songid=' + songid
-                fetch(url)
-                    .then((response) => response.json())
-                    .then((responseJson) => {
- 
-                        let lry = responseJson.lrcContent
-                        let lryAry = lry.split('\n')   //按照换行符切数组
-                        lryAry.forEach(function (val, index) {
-                            var obj = {}   //用于存放时间
-                            val = val.replace(/(^\s*)|(\s*$)/g, '')    //正则,去除前后空格
-                            let indeofLastTime = val.indexOf(']')  // ]的下标
-                            let timeStr = val.substring(1, indeofLastTime) //把时间切出来 0:04.19
-                            let minSec = ''
-                            let timeMsIndex = timeStr.indexOf('.')  // .的下标
-                            if (timeMsIndex !== -1) {
-                                //存在毫秒 0:04.19
-                                minSec = timeStr.substring(1, val.indexOf('.'))  // 0:04.
-                                obj.ms = parseInt(timeStr.substring(timeMsIndex + 1, indeofLastTime))  //毫秒值 19
-                            } else {
-                                //不存在毫秒 0:04
-                                minSec = timeStr
-                                obj.ms = 0
-                            }
-                            let curTime = minSec.split(':')  // [0,04]
-                            obj.min = parseInt(curTime[0])   //分钟 0
-                            obj.sec = parseInt(curTime[1])   //秒钟 04
-                            obj.txt = val.substring(indeofLastTime + 1, val.length) //歌词文本: 留下唇印的嘴
-                            obj.txt = obj.txt.replace(/(^\s*)|(\s*$)/g, '')
-                            obj.dis = false
-                            obj.total = obj.min * 60 + obj.sec + obj.ms / 100   //总时间
-                            if (obj.txt.length > 0) {
-                                lyrObj.push(obj)
-                            }
-                        })
-                    })
- 
-            })
+
+    onEnd(data) {
+        // this.showMessageBar('亲！')('已帮你切换到下一首')('fuccess')
+        // if (this.state.playMode === 0) {
+        //   this.nextSong(this.state.currentIndex + 1)
+        // } else if (this.state.playMode === 1) {
+        //   this.player.seek(0)
+        // } else {
+        //   this.nextSong(Math.floor(Math.random() * this.musicList.length))
+        // }
+        this.player.seek(0)
     }
- 
- 
-    componentWillMount() {
-        //先从总列表中获取到song_id保存
-        fetch('http://tingapi.ting.baidu.com/v1/restserver/ting?method=baidu.ting.billboard.billList&type=2&size=10&offset=0')
-            .then((response) => response.json())
-            .then((responseJson) => {
-                  var listAry = responseJson.song_list
-                var song_idAry = []; //保存song_id的数组
-                for(var i = 0;i<listAry.length;i++){
-                      let song_id = listAry[i].song_id
-                      song_idAry.push(song_id)
-                  }
-                this.setState({
-                    songs:song_idAry
-                })
-                this.loadSongInfo(0)   //预先加载第一首
-            })
- 
-        this.spin()   //   启动旋转
- 
-    }
- 
-    //旋转动画
-    spin () {
+    
+    spin() {
         this.spinValue.setValue(0)
         myAnimate = Animated.timing(
             this.spinValue,
@@ -272,155 +86,233 @@ export default class MusicPlayer extends Component {
                 easing: Easing.linear
             }
         ).start(() => this.spin())
- 
     }
- 
-    render() {
-        //如果未加载出来数据 就一直转菊花
-        if (this.state.file_link.length <= 0 ) {
-            return(
-                <ActivityIndicator
-                    animating={this.state.animating}
-                    style={{flex: 1,alignItems: 'center',justifyContent: 'center'}}
-                    size="large" />
-            )
-        }else{
-            const spin = this.spinValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: ['0deg', '360deg']
+
+    musicPlay() {
+        this.setState({
+            pause: !this.state.pause
+        })
+        //判断按钮显示什么
+        if(this.state.pause == true){
+            this.setState({
+                playIcon: require('../pic/pause.png')//播放
             })
- 
- 
-            //数据加载出来
-            return (
-                <View style={styles.container}>
-                    {/*背景大图*/}
-                    <Image source={{uri:this.state.pic_big}} style={{flex:1}}/>
-                    {/*背景白色透明遮罩*/}
-                    <View style = {{position:'absolute',width: width,height:height,backgroundColor:'white',opacity:0.8}}/>
- 
-                    <View style = {{position:'absolute',width: width}}>
-                        {/*胶片光盘*/}
-                        <Image source={require('../pic/search.png')} style={{width:220,height:220,alignSelf:'center'}}/>
- 
-                        {/*旋转小图*/}
-                        <Animated.Image
-                            ref = 'myAnimate'
-                            style={{width:140,height:140,marginTop: -180,alignSelf:'center',borderRadius: 140*0.5,transform: [{rotate: spin}]}}
-                            source={{uri: this.state.pic_small}}
-                        />
- 
-                        {/*播放器*/}
-                        <Video
-                            source={{uri: this.state.file_link}}
-                            ref='video'
-                            volume={1.0}
-                            paused={this.state.pause}
-                            onProgress={(e) => this.onProgress(e)}
-                            onLoad={(e) => this.onLoad(e)}
-                        />
-                        {/*歌曲信息*/}
-                        <View style={styles.playingInfo}>
-                            {/*作者-歌名*/}
-                            <Text>{this.state.author} - {this.state.title}</Text>
-                            {/*时间*/}
-                            <Text>{this.formatTime(Math.floor(this.state.currentTime))} - {this.formatTime(Math.floor(this.state.duration))}</Text>
-                        </View>
-                        {/*播放模式*/}
-                        <View style = {{marginTop: 5,marginBottom:5,marginLeft: 20}}>
-                            <TouchableOpacity onPress={()=>this.playModel(this.state.playModel)}>
-                                <Image source={this.state.btnModel} style={{width:20,height:20}}/>
-                            </TouchableOpacity>
-                        </View>
-                        {/*进度条*/}
-                        <Slider
-                            ref='slider'
-                            style={{ marginLeft: 10, marginRight: 10}}
-                            value={this.state.sliderValue}
-                            maximumValue={this.state.file_duration}
-                            step={1}
-                            minimumTrackTintColor='#FFDB42'
-                            onValueChange={(value) => {
-                              this.setState({
-                                  currentTime:value
-                              })
-                                        }
-                                    }
-                            onSlidingComplete={(value) => {
-                                         this.refs.video.seek(value)
-                                    }}
-                        />
-                        {/*歌曲按钮*/}
-                        <View style = {{flexDirection:'row',justifyContent:'space-around'}}>
-                            <TouchableOpacity onPress={()=>this.prevAction(this.state.currentIndex - 1)}>
-                                <Image source={require('../pic/search.png')} style={{width:30,height:30}}/>
-                            </TouchableOpacity>
- 
-                            <TouchableOpacity onPress={()=>this.playAction()}>
-                                <Image source={this.state.isplayBtn} style={{width:30,height:30}}/>
-                            </TouchableOpacity>
- 
-                            <TouchableOpacity onPress={()=>this.nextAction(this.state.currentIndex + 1)}>
-                                <Image source={require('../pic/search.png')} style={{width:30,height:30}}/>
-                            </TouchableOpacity>
-                        </View>
- 
-                        {/*歌词*/}
-                        <View style={{height:140,alignItems:'center'}}>
- 
-                            <ScrollView style={{position:'relative'}}
-                                        ref={(scrollView) => { _scrollView = scrollView}}
-                            >
-                                {this.renderItem()}
-                            </ScrollView>
-                        </View>
-                    </View>
- 
-                </View>
-            )
+        }else {
+            this.setState({
+                playIcon: require('../pic/play.png')//暂停
+            })
         }
- 
+    }
+
+    renderItem() {
+        // 数组
+        var itemAry = [];
+        for (var i = 0; i < lyrObj.length; i++) {
+            var item = lyrObj[i].txt
+            if (this.state.currentTime.toFixed(2) > lyrObj[i].total) {
+                //正在唱的歌词
+                itemAry.push(
+                    <View key={i} style={styles.lyricTxt}>
+                        <Text style={{ fontSize: 15, color: '#EBEBEB' }}>{item}</Text>
+                    </View>
+                );
+                _scrollView.scrollTo({x: 0, y:(25 * i), animated:false});
+            }
+            else {
+                //所有歌词
+                itemAry.push(
+                    <View key={i} style={styles.lyricTxt}>
+                        <Text style={{ fontSize: 15, color: '#757575' }}>{item}</Text>
+                    </View>
+                )
+            }
+        }
+        return itemAry;
+    }
+
+    async fetchMusicUrl(){
+        let url = MUSIC_URL + this.state.musicId;
+        try{
+            const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            const parsedResult = await res.json();
+            let constantData = parsedResult.data[0].url;
+            this.setState({
+                musicUrl: constantData,
+            });
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        }
+    };
+
+    async fetchLyric(){
+        let url = MUSIC_LYRIC+ this.state.musicId;
+        try{
+            const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            const parsedResult2 = await res.json();
+            let constantData2 = parsedResult2.lrc.lyric;
+            // debugger
+            this.setState({
+                lyric: constantData2,
+            });
+
+            let lryAry = this.state.lyric.split('\n')   //按照换行符切数组
+            lryAry.forEach(function (val, index) {
+                var obj = {}   //用于存放时间
+                /*
+                    ^表示字符串必须以后面的规则开头, 在这里就是说字符串必须以\s*开头.
+                    \s 是空格的意思, * 表示有0个或多个
+                    \s* 就是有0个或多个空格
+                    (^\s*) 表示的就是以0个空格或者多个空格开头
+                    | 表示或的意思, 也就是满足| 左边的也成立, 满足 | 右面的也成立.
+                    \s*前面说过了
+                    $ 的意思是字符串必须以前面的规则结尾
+                    (\s*$) 的意思就是, 以0个空格或者多个空格结尾
+                    /.../g  是正则表达式的属性, 表示全文匹配, 而不是找到一个就停止.
+                */ 
+                val = val.replace(/(^\s*)|(\s*$)/g, '')    //正则,去除前后空格并用空字符串代替
+                let indeofLastTime = val.indexOf(']')  // ]的下标
+                let timeStr = val.substring(1, indeofLastTime) //把时间切出来 0:04.19
+                let minSec = ''
+                let timeMsIndex = timeStr.indexOf('.')  // .的下标
+                minSec = timeStr.substring(1, val.indexOf('.'))
+                obj.ms = parseInt(timeStr.substring(timeMsIndex + 1, indeofLastTime))
+                // if (timeMsIndex !== -1) {
+                //     //存在毫秒 0:04.19
+                //     minSec = timeStr.substring(0, val.indexOf('.'))  // 0:04.
+                //     obj.ms = parseInt(timeStr.substring(timeMsIndex + 1, indeofLastTime))  //毫秒值 19
+                // } else {
+                //     //不存在毫秒 0:04
+                //     minSec = timeStr
+                //     obj.ms = 0
+                // }
+                let curTime = minSec.split(':')  // [0,04]
+                obj.m = parseInt(curTime[0])   //分钟 0
+                obj.s = parseInt(curTime[1])   //秒钟 04
+                obj.txt = val.substring(indeofLastTime + 1, val.length) //歌词文本: 留下唇印的嘴
+                obj.txt = obj.txt.replace(/(^\s*)|(\s*$)/g, '')
+                obj.dis = false
+                obj.total = obj.m * 60 + obj.s + obj.ms / 100   //总时间
+                if (obj.txt.length > 0) {
+                    lyrObj.push(obj)
+                }
+            })
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        }
+    };
+
+    render() {
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        })
+
+        return(
+            <View style={styles.container}>
+                <Image source={require('../pic/circle.png')} style={{width:260,height:260,marginTop: 60,alignSelf:'center'}}/>
+                <Animated.Image
+                    ref = 'myAnimate'
+                    style={{width:166,height:166,marginTop: -214,alignSelf:'center',borderRadius: 180*0.5,transform: [{rotate: spin}]}}
+                    source={require('../pic/gtr.jpg')}
+                />
+                <Video
+                    source={{uri: this.state.musicUrl}}
+                    ref={video => this.player = video}
+                    volume={1.0}
+                    paused={this.state.pause}
+                    onLoadStart={this.loadStart}
+                    onLoad={data => this.setDuration(data)}
+                    onProgress={(data) => this.setTime(data)}
+                    onEnd={(data) => this.onEnd(data)}
+                />
+                <View style={styles.slideBar}>
+                    <Text style={{width: 35, fontSize: 12, color: 'white', marginLeft: 5}}>{this.formatMediaTime(Math.floor(this.state.currentTime))}</Text>
+                    <Slider
+                        style={styles.sliderStyle}
+                        value={this.state.slideValue}
+                        maximumValue={this.state.duration}
+                        step={1}
+                        onValueChange={value => this.setState({currentTime: value})}
+                        onSlidingComplete={value => this.player.seek(value)}
+                        minimumTrackTintColor='#757575'
+                        maximumTrackTintColor='#EBEBEB'
+                        thumbImage={require('../pic/slideIcon.png')}
+                    />
+                    <View style={{width: 35, alignItems: 'flex-end', marginRight: 5}}>
+                        <Text style={{fontSize: 12, color: 'white'}}>{this.formatMediaTime(Math.floor(this.state.duration))}</Text>
+                    </View>
+                </View>
+                
+                {/* Todo
+                    实现收藏音乐 
+                */}
+                <View style={styles.playBar}>
+                    <TouchableOpacity onPress={() => this.musicPlay()}>
+                        <Image source={this.state.playIcon} style={{ width:35, height:35, left:190 }}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity >
+                        <Image source={require('../pic/like.png')} style={{ width:30, height:30, left:330, top: -5}}/>
+                    </TouchableOpacity>
+                </View>
+
+
+                <View style={styles.lyricBar}>
+                    <ScrollView 
+                        style={{position:'relative'}}
+                        ref={(scrollView) => { _scrollView = scrollView}}
+                    >
+                        {this.renderItem()}
+                    </ScrollView>
+                </View>
+            </View>
+        );
     }
 }
- 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection:'column',
+        //   alignItems: 'center',
+        // justifyContent: 'center',
+        backgroundColor: '#1A2225',
     },
-    image: {
-        flex: 1
+    sliderStyle: {
+        flex: 1,
+        marginHorizontal: 5,
     },
-    playingControl: {
+    slideBar: {
         flexDirection: 'row',
+        marginHorizontal: 10,
         alignItems: 'center',
-        paddingTop: 10,
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingBottom: 20
+        top: 60,
     },
-    playingInfo: {
-        flexDirection: 'row',
-        alignItems:'stretch',
-        justifyContent: 'space-between',
-        paddingTop: 40,
-        paddingLeft: 20,
-        paddingRight: 20,
-        backgroundColor:'rgba(255,255,255,0.0)'
+    playBar:{
+        flexDirection:'row',
+        alignItems: 'flex-end',
+        // justifyContent:'center',
+        top: 60,
     },
-    text: {
-        color: "black",
-        fontSize: 22
+    lyricBar: {
+        height:300,
+        alignItems: 'center',
+        top: 85,
     },
-    modal: {
-        height: 300,
-        borderTopLeftRadius: 5,
-        borderTopRightRadius: 5,
-        paddingTop: 5,
-        paddingBottom: 50
-    },
-    itemStyle: {
-        paddingTop: 20,
-        height:25,
-        backgroundColor:'rgba(255,255,255,0.0)'
+    lyricTxt: {
+        // paddingTop: 20,
+        height: 25,
+        alignItems: 'center',
     }
 })
