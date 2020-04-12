@@ -25,7 +25,7 @@ export default class MusicPlayer extends Component{
         this.spinValue = new Animated.Value(0);
         this.player = ''
         this.state = {
-            musicId: '1417453306',
+            musicId: '',
             musicUrl: '',
             paused: false,
             duration: 0.0,
@@ -38,7 +38,13 @@ export default class MusicPlayer extends Component{
         }
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
+        // let id = navigation.getParam("params");
+        let id = this.props.navigation.state.params.id;
+        debugger
+        this.setState({
+            musicId: id,
+        })
         await this.fetchMusicUrl();
         await this.fetchLyric();
         this.spin(); 
@@ -161,7 +167,6 @@ export default class MusicPlayer extends Component{
             });
             const parsedResult2 = await res.json();
             let constantData2 = parsedResult2.lrc.lyric;
-            // debugger
             this.setState({
                 lyric: constantData2,
             });

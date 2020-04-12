@@ -27,11 +27,6 @@ class MusicElement extends Component {
         // this.playMusic=this.playMusic.bind(this);
     }
 
-    // selectMusic = () => {
-    //     const isSelect = !this.state.isSelect;
-    //     this.setState({ isSelect });
-    // }
-
     selectMusic(){
         if(this.state.isSelect == false){
             this.setState({
@@ -54,6 +49,7 @@ class MusicElement extends Component {
             this.props.navigation.navigate("Music Player",{
                 params: id,
             });
+            // alert(id);
         } else{
             alert('没有版权!');
         }
@@ -79,7 +75,6 @@ class MusicElement extends Component {
             console.error(err);
         }
     };
-
 
     render() {
         const item = this.props.item;
