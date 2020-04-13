@@ -36,6 +36,8 @@ export default class MusicPlayer extends Component{
             playIcon: require('../pic/pause.png'),
             lyric: [],
         }
+
+        this._scrollView = null;
     }
 
     async componentDidMount() {
@@ -117,7 +119,7 @@ export default class MusicPlayer extends Component{
                         <Text style={{ fontSize: 15, color: '#EBEBEB' }}>{item}</Text>
                     </View>
                 );
-                _scrollView.scrollTo({x: 0, y:(25 * i), animated:false});
+                this._scrollView.scrollTo({x: 0, y:(25 * i), animated:false});
             }
             else {
                 //所有歌词
@@ -271,7 +273,7 @@ export default class MusicPlayer extends Component{
                 <View style={styles.lyricBar}>
                     <ScrollView 
                         style={{position:'relative'}}
-                        ref={(scrollView) => { _scrollView = scrollView}}
+                        ref={(scrollView) => { this._scrollView = scrollView}}
                     >
                         {this.renderItem()}
                     </ScrollView>
