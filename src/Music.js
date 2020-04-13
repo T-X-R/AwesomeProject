@@ -78,6 +78,7 @@ class MusicElement extends Component {
 
     render() {
         const item = this.props.item;
+        
 
         return (
             <View>
@@ -85,6 +86,7 @@ class MusicElement extends Component {
                     this.props.navigation.navigate("Music Player",{
                     params: item.id,
                 })}> */}
+                
                 <TouchableOpacity onPress = {()=> this.playMusic(item.id)}>
                     <View>
                         <Text style={styles.text}>{item.id}</Text>
@@ -154,8 +156,13 @@ export default class Music extends Component{
     };
 
     
-    
     render(){
+        // this.buttonColors = this.props.naviBarStatus.map(
+        // function(aNumber) {
+        //     if (aNumber == 0) return 'white';
+        //         return 'gray';
+        //     }
+        // );
         return(
             <View style={styles.container}>
                 <View style={styles.container2}>
@@ -172,7 +179,24 @@ export default class Music extends Component{
                         <Text style={styles.button}>搜索</Text>
                     </TouchableOpacity>
                 </View>
+                <View style={{flexDirection:'row', alignItems: 'flex-end', top: 5,justifyContent: 'space-around'}}>
+                    <TouchableHighlight>
+                        <View>
+                            <Text style={styles.text}>
+                                栏目一
+                            </Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight>
+                        <View>
+                            <Text style={styles.text}>
+                                栏目二
+                            </Text>
+                        </View>
+                    </TouchableHighlight>
+                </View>
                 <FlatList
+                    style={{top: 12}}
                     data={this.state.musicId}
                     renderItem={({item}) => <MusicElement item={item} navigation={this.props.navigation} />}
                 />
