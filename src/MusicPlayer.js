@@ -25,7 +25,7 @@ export default class MusicPlayer extends Component{
         this.spinValue = new Animated.Value(0);
         this.player = ''
         this.state = {
-            musicId: '',
+            musicId: this.props.route.params.musicId,
             musicUrl: '',
             paused: false,
             duration: 0.0,
@@ -36,15 +36,12 @@ export default class MusicPlayer extends Component{
             playIcon: require('../pic/pause.png'),
             lyric: [],
         }
+
+        this._scrollView = null;
     }
 
     async componentDidMount() {
         // let id = navigation.getParam("params");
-        let id = this.props.navigation.state.params.id;
-        debugger
-        this.setState({
-            musicId: id,
-        })
         await this.fetchMusicUrl();
         await this.fetchLyric();
         this.spin(); 
@@ -122,7 +119,7 @@ export default class MusicPlayer extends Component{
                         <Text style={{ fontSize: 15, color: '#EBEBEB' }}>{item}</Text>
                     </View>
                 );
-                _scrollView.scrollTo({x: 0, y:(25 * i), animated:false});
+                this._scrollView.scrollTo({x: 0, y:(25 * i), animated:false});
             }
             else {
                 //所有歌词
@@ -276,7 +273,7 @@ export default class MusicPlayer extends Component{
                 <View style={styles.lyricBar}>
                     <ScrollView 
                         style={{position:'relative'}}
-                        ref={(scrollView) => { _scrollView = scrollView}}
+                        ref={(scrollView) => { this._scrollView = scrollView}}
                     >
                         {this.renderItem()}
                     </ScrollView>

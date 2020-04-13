@@ -23,8 +23,8 @@ class MusicElement extends Component {
             isSelect: false,
             checkUrl: false,
         }
-        // this.selectMusic = this.selectMusic.bind(this);
-        // this.playMusic=this.playMusic.bind(this);
+        this.selectMusic = this.selectMusic.bind(this);
+        this.playMusic=this.playMusic.bind(this);
     }
 
     selectMusic(){
@@ -47,7 +47,7 @@ class MusicElement extends Component {
     playMusic(id){
         if(this.state.checkUrl == true){
             this.props.navigation.navigate("Music Player",{
-                params: id,
+                musicId: id,
             });
             // alert(id);
         } else{
@@ -110,6 +110,8 @@ export default class Music extends Component{
             musicId: [],
             musicName: '',
         }
+
+        this.updateTextInput = this.updateTextInput.bind(this);
     }
 
     updateTextInput = (text, field) => {

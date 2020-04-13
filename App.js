@@ -14,6 +14,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
+if(__DEV__) {
+  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+}
+
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
