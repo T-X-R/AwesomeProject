@@ -23,8 +23,8 @@ class MusicElement extends Component {
             isSelect: false,
             checkUrl: false,
         }
-        // this.selectMusic = this.selectMusic.bind(this);
-        // this.playMusic=this.playMusic.bind(this);
+        this.selectMusic = this.selectMusic.bind(this);
+        this.playMusic=this.playMusic.bind(this);
     }
 
     selectMusic(){
@@ -108,6 +108,8 @@ export default class Music extends Component{
             musicId: [],
             musicName: '',
         }
+
+        this.updateTextInput = this.updateTextInput.bind(this);
     }
 
     updateTextInput = (text, field) => {
