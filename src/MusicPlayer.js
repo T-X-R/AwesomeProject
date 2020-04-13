@@ -25,7 +25,7 @@ export default class MusicPlayer extends Component{
         this.spinValue = new Animated.Value(0);
         this.player = ''
         this.state = {
-            musicId: '',
+            musicId: this.props.route.params.musicId,
             musicUrl: '',
             paused: false,
             duration: 0.0,
@@ -40,11 +40,6 @@ export default class MusicPlayer extends Component{
 
     async componentDidMount() {
         // let id = navigation.getParam("params");
-        let id = this.props.navigation.state.params.id;
-        debugger
-        this.setState({
-            musicId: id,
-        })
         await this.fetchMusicUrl();
         await this.fetchLyric();
         this.spin(); 
