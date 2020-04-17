@@ -43,13 +43,11 @@ export default class Fans extends Component {
             }
             });
             const parsedResult = await res.json();
-            // debugger
             let constantData = parsedResult.profile.follows;
             this.setState({
                 isLoading: false,
                 fan: constantData,
             });
-            // debugger
         } catch (err) {
             alert(err);
             console.error(err);

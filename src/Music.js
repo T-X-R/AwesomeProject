@@ -11,11 +11,14 @@ import {
     TouchableHighlight,
     RefreshControl,
 } from 'react-native';
-// import { fetchId } from '../src/GetId';
+import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import { SEARCH_MUSIC } from '../src/api';
 import { CHECK_MUSIC } from '../src/api';
-// import MyTextInput from '../src/MyTextInput';
+import { SEARCH_MUSIC2 } from '../src/api';
+import { MUSIC_DETAIL2 } from '../src/api';
+import { MUSIC_VKEY } from '../src/api';
 
+//网易云音乐
 class MusicElement extends Component {
     constructor(props){
         super(props);
@@ -48,6 +51,8 @@ class MusicElement extends Component {
         if(this.state.checkUrl == true){
             this.props.navigation.navigate("Music Player",{
                 musicId: id,
+                code: 1,
+                url: '',
             });
             // alert(id);
         } else{
@@ -78,15 +83,9 @@ class MusicElement extends Component {
 
     render() {
         const item = this.props.item;
-        
 
         return (
             <View>
-                {/* <TouchableOpacity onPress = {() =>
-                    this.props.navigation.navigate("Music Player",{
-                    params: item.id,
-                })}> */}
-                
                 <TouchableOpacity onPress = {()=> this.playMusic(item.id)}>
                     <View>
                         <Text style={styles.text}>{item.id}</Text>
@@ -102,15 +101,106 @@ class MusicElement extends Component {
     }
 }
 
+//QQ音乐
+class MusicElement2 extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            isSelect2: false,
+            playUrl: '',
+        }
+        this.selectMusic2 = this.selectMusic2.bind(this);
+        this.playMusic2=this.playMusic2.bind(this);
+    }
+
+    selectMusic2(){
+        if(this.state.isSelect2 == false){
+            this.setState({
+                isSelect2: true,
+            });
+        } else{
+            this.setState({
+                isSelect2: false,
+            });
+        }
+    }
+
+    componentDidMount() {
+        const item = this.props.item;
+        this.getMusicUrl(item.mid);
+    }
+
+    // playMusic2(id){
+    //     if(this.state.checkUrl2 == true){
+    //         this.props.navigation.navigate("Music Player",{
+    //             musicId: id,
+    //         });
+    //         // alert(id);
+    //     } else{
+    //         alert('没有版权!');
+    //     }
+    // }
+
+    playMusic2(item){
+
+        this.props.navigation.navigate("Music Player",{
+            musicId: item.mid,
+            code: 2,
+            url: this.state.playUrl,
+        });
+           
+    }
+    
+    async getMusicUrl(id){
+        let url = MUSIC_VKEY + id;
+        try{
+            const res3 = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            const parsedResult3 = await res3.json();
+            let constantData3 = parsedResult3.response.playLists[0];
+            this.setState({
+                playUrl: constantData3,
+            });
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        }
+    };
+
+    render() {
+        const item = this.props.item;
+
+        return (
+            <View>
+                <TouchableOpacity onPress = {()=> this.playMusic2(item)}>
+                    <View>
+                        <Text style={styles.text}>{item.mid}</Text>
+                        <Text style={styles.text}>{item.name}</Text>
+                        <Text style={styles.text}>{this.state.playUrl}</Text>
+                        {/* <Text style={styles.text}>{item.artists.name}</Text> */}
+                        <Text style={styles.text}>选中状态：{JSON.stringify(this.state.isSelect2)}</Text>
+                        <Text></Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+}
+
 export default class Music extends Component{
     constructor(props){
         super(props);
         this.state = {
             isLoading: true,
+            isLoading2: true,
             musicId: [],
+            musicId2: [],
             musicName: '',
         }
-
         this.updateTextInput = this.updateTextInput.bind(this);
     }
 
@@ -157,14 +247,44 @@ export default class Music extends Component{
         }
     };
 
-    
+    async searchMusic2(){
+        let url = SEARCH_MUSIC2 + this.state.musicName;
+        try{
+            const resQ = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            const parsedResultQ = await resQ.json();
+            let constantDataQ = parsedResultQ.response.data.song.list;
+            this.setState({
+                isLoading2: false,
+                musicId2: constantDataQ,
+            });
+            
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        }
+    };
+
+// headerTab () {
+//     return (
+//         <ScrollableTabView
+//             initialPage={0}
+//             tabBarActiveTextColor='white'
+//             tabBarInactiveTextColor='#777777'
+//             tabBarTextStyle={{fontSize: 15}}
+//             tabBarUnderlineStyle={styles.underlineStyle}
+//         >
+//             <Text tabLabel='网易云音乐'></Text>
+//             <Text tabLabel='QQ音乐'></Text>
+//         </ScrollableTabView>
+//     )
+// }
+
     render(){
-        // this.buttonColors = this.props.naviBarStatus.map(
-        // function(aNumber) {
-        //     if (aNumber == 0) return 'white';
-        //         return 'gray';
-        //     }
-        // );
         return(
             <View style={styles.container}>
                 <View style={styles.container2}>
@@ -176,33 +296,37 @@ export default class Music extends Component{
                     >
                     </TextInput>
                     <TouchableOpacity
-                        onPress={() => this.searchMusic()}
+                        onPressIn={() => this.searchMusic()}
+                        onPressOut={() => this.searchMusic2()}
                     >
                         <Text style={styles.button}>搜索</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{flexDirection:'row', alignItems: 'flex-end', top: 5,justifyContent: 'space-around'}}>
-                    <TouchableHighlight>
-                        <View>
-                            <Text style={styles.text}>
-                                栏目一
-                            </Text>
-                        </View>
-                    </TouchableHighlight>
-                    <TouchableHighlight>
-                        <View>
-                            <Text style={styles.text}>
-                                栏目二
-                            </Text>
-                        </View>
-                    </TouchableHighlight>
-                </View>
-                <FlatList
-                    style={{top: 12}}
-                    data={this.state.musicId}
-                    renderItem={({item}) => <MusicElement item={item} navigation={this.props.navigation} />}
-                />
+                <ScrollableTabView
+                    initialPage={0}
+                    tabBarActiveTextColor='white'
+                    tabBarInactiveTextColor='#777777'
+                    tabBarTextStyle={{fontSize: 15}}
+                    tabBarUnderlineStyle={styles.underlineStyle}
+                >
+                    <View tabLabel='网易云音乐'>
+                        <FlatList
+                            style={{top: 8}}
+                            data={this.state.musicId}
+                            renderItem={({item}) => <MusicElement item={item} navigation={this.props.navigation} />}
+                        />
+                    </View>
+                    <View tabLabel='QQ音乐'>
+                        <FlatList
+                            style={{top: 8}}
+                            data={this.state.musicId2}
+                            renderItem={({item}) => <MusicElement2 item={item} navigation={this.props.navigation} />}
+                        />
+                    </View>
+                    {/* <Text tabLabel='QQ音乐'></Text> */}
+                </ScrollableTabView>
             </View>
+            
             
         );
     
@@ -224,6 +348,10 @@ const styles = StyleSheet.create({
     text:{
         color: 'white',
         fontSize: 15,
+    },
+    underlineStyle: {
+        height: 2,
+        backgroundColor: 'white',
     },
     inputKeywords:{
         width: 210,

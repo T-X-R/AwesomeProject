@@ -50,10 +50,8 @@ export default class PlayList extends Component{
     //         }
     //         });
     //         const parsedResult = await res.json();
-    //         // debugger
     //         let constantData = parsedResult.account.id;
             
-    //         // debugger
 
     //         this.setState({
     //             isLoading: false,
@@ -81,7 +79,6 @@ export default class PlayList extends Component{
                 isLoading: false,
                 playList: constantData2, 
             });
-            // debugger
         } catch (err) {
             alert(err);
             console.error(err);

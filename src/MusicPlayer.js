@@ -15,6 +15,8 @@ import Video from 'react-native-video'
 import { MUSIC_URL } from '../src/api';
 import { MUSIC_DETAIL } from '../src/api';
 import { MUSIC_LYRIC } from '../src/api';
+import { SEARCH_MUSIC2 } from '../src/api';
+import { MUSIC_LYRIC2 } from '../src/api';
 var myAnimate;
 var lyrObj = [];
  
@@ -26,7 +28,8 @@ export default class MusicPlayer extends Component{
         this.player = ''
         this.state = {
             musicId: this.props.route.params.musicId,
-            musicUrl: '',
+            code: this.props.route.params.code,
+            musicUrl: this.props.route.params.url,
             paused: false,
             duration: 0.0,
             slideValue: 0.0,
@@ -36,12 +39,10 @@ export default class MusicPlayer extends Component{
             playIcon: require('../pic/pause.png'),
             lyric: [],
         }
-
         this._scrollView = null;
     }
 
     async componentDidMount() {
-        // let id = navigation.getParam("params");
         await this.fetchMusicUrl();
         await this.fetchLyric();
         this.spin(); 
@@ -134,41 +135,68 @@ export default class MusicPlayer extends Component{
     }
 
     async fetchMusicUrl(){
-        let url = MUSIC_URL + this.state.musicId;
-        try{
-            const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
+        if(this.state.code == 1){
+            let url = MUSIC_URL + this.state.musicId;
+            try{
+                const res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+                });
+                const parsedResult = await res.json();
+                let constantData = parsedResult.data[0].url;
+                this.setState({
+                    musicUrl: constantData,
+                });
+            } catch (err) {
+                alert(err);
+                console.error(err);
             }
-            });
-            const parsedResult = await res.json();
-            let constantData = parsedResult.data[0].url;
-            this.setState({
-                musicUrl: constantData,
-            });
-        } catch (err) {
-            alert(err);
-            console.error(err);
+        } else{
+            console.log(this.state.musicUrl)
         }
     };
 
     async fetchLyric(){
-        let url = MUSIC_LYRIC+ this.state.musicId;
-        try{
-            const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
+        if(this.state.code == 1){
+            let url = MUSIC_LYRIC + this.state.musicId;
+            try{
+                const res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+                });
+                const parsedResult2 = await res.json();
+                let constantData2 = parsedResult2.lrc.lyric;
+                this.setState({
+                    lyric: constantData2,
+                });
+            } catch (err) {
+                alert(err);
+                console.error(err);
             }
-            });
-            const parsedResult2 = await res.json();
-            let constantData2 = parsedResult2.lrc.lyric;
-            this.setState({
-                lyric: constantData2,
-            });
-
-            let lryAry = this.state.lyric.split('\n')   //按照换行符切数组
+        } else if(this.state.code == 2){
+            let url2 = MUSIC_LYRIC2 + this.state.musicId;
+            try{
+                const res2 = await fetch(url2, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+                });
+                const parsedResultQ = await res2.json();
+                let constantDataQ = parsedResultQ.response.lyric;
+                this.setState({
+                    lyric: constantDataQ,
+                });
+            } catch (err) {
+                alert(err);
+                console.error(err);
+            }
+        }
+        let lryAry = this.state.lyric.split('\n')   //按照换行符切数组
             lryAry.forEach(function (val, index) {
                 var obj = {}   //用于存放时间
                 /*
@@ -201,7 +229,7 @@ export default class MusicPlayer extends Component{
                 let curTime = minSec.split(':')  // [0,04]
                 obj.m = parseInt(curTime[0])   //分钟 0
                 obj.s = parseInt(curTime[1])   //秒钟 04
-                obj.txt = val.substring(indeofLastTime + 1, val.length) //歌词文本: 留下唇印的嘴
+                obj.txt = val.substring(indeofLastTime + 1, val.length) 
                 obj.txt = obj.txt.replace(/(^\s*)|(\s*$)/g, '')
                 obj.dis = false
                 obj.total = obj.m * 60 + obj.s + obj.ms / 100   //总时间
@@ -209,10 +237,6 @@ export default class MusicPlayer extends Component{
                     lyrObj.push(obj)
                 }
             })
-        } catch (err) {
-            alert(err);
-            console.error(err);
-        }
     };
 
     render() {

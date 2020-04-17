@@ -24,8 +24,8 @@ export const HOT = BASE_URL + '/toplist/artist';
 const BASE_URL2 = 'http://localhost:3200';
 // 搜索歌曲
 export const SEARCH_MUSIC2 = BASE_URL2 + '/getSearchByKey?key=';
-// 音乐是否可用
-export const CHECK_MUSIC2 = BASE_URL2 + '/check/music?id=';
+/// 获取音乐Vkey
+export const MUSIC_VKEY = BASE_URL2 + '/getMusicVKey?songmid=';
 // 获取音乐详情
 export const MUSIC_DETAIL2 = BASE_URL2 + '/getSongInfo?songmid=';
 // 获取歌词

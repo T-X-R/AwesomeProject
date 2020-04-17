@@ -40,7 +40,6 @@ async fetchData() {
         });
         const parsedResult = await res.json();
         let constantData = parsedResult.list.artists;
-        // debugger
         this.setState({
             isLoading: false,
             dataSource: constantData, 
