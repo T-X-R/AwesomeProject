@@ -108,6 +108,14 @@ export default class MusicPlayer extends Component{
         }
     }
 
+    collectMusic(){
+        this.props.navigation.navigate("Collection",{
+            id: this.state.musicId,
+            url: this.state.musicUrl,
+            c: this.state.code,
+        });
+    }
+
     renderItem() {
         // 数组
         var itemAry = [];
@@ -288,7 +296,7 @@ export default class MusicPlayer extends Component{
                     <TouchableOpacity onPress={() => this.musicPlay()}>
                         <Image source={this.state.playIcon} style={{ width:35, height:35, left:190 }}/>
                     </TouchableOpacity>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={() => this.collectMusic()}>
                         <Image source={require('../pic/like.png')} style={{ width:30, height:30, left:330, top: -5}}/>
                     </TouchableOpacity>
                 </View>

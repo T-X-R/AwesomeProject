@@ -15,10 +15,12 @@ export const USER_DETAIL = BASE_URL + '/user/detail?uid=';
 export const MUSIC_URL = BASE_URL + '/song/url?id=';
 // 获取音乐详情
 export const MUSIC_DETAIL = BASE_URL + '/song/detail?ids=';
+// 获取歌单详情
+export const PLAYLIST_DETAIL = BASE_URL + '/playlist/detail?id=';
 // 获取歌词
 export const MUSIC_LYRIC = BASE_URL + '/lyric?id=';
-// 歌手榜
-export const HOT = BASE_URL + '/toplist/artist';
+// 获取榜单
+export const TOP_LIST = BASE_URL + '/toplist';
 
 /* qq音乐api */
 const BASE_URL2 = 'http://localhost:3200';
@@ -30,3 +32,5 @@ export const MUSIC_VKEY = BASE_URL2 + '/getMusicVKey?songmid=';
 export const MUSIC_DETAIL2 = BASE_URL2 + '/getSongInfo?songmid=';
 // 获取歌词
 export const MUSIC_LYRIC2 = BASE_URL2 + '/getLyric?songmid=';
+// 获取榜单
+export const TOP_LIST2 = BASE_URL2 + '/getTopLists';

@@ -269,21 +269,6 @@ export default class Music extends Component{
         }
     };
 
-// headerTab () {
-//     return (
-//         <ScrollableTabView
-//             initialPage={0}
-//             tabBarActiveTextColor='white'
-//             tabBarInactiveTextColor='#777777'
-//             tabBarTextStyle={{fontSize: 15}}
-//             tabBarUnderlineStyle={styles.underlineStyle}
-//         >
-//             <Text tabLabel='网易云音乐'></Text>
-//             <Text tabLabel='QQ音乐'></Text>
-//         </ScrollableTabView>
-//     )
-// }
-
     render(){
         return(
             <View style={styles.container}>
@@ -323,7 +308,6 @@ export default class Music extends Component{
                             renderItem={({item}) => <MusicElement2 item={item} navigation={this.props.navigation} />}
                         />
                     </View>
-                    {/* <Text tabLabel='QQ音乐'></Text> */}
                 </ScrollableTabView>
             </View>
             

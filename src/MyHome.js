@@ -14,9 +14,9 @@ export default class MyHome extends Component {
         return(
             <View style={styles.container}>
                 <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Singer List")}
+                onPress={() => this.props.navigation.navigate("Top List")}
                 >
-                    <Text style={styles.button}>歌手榜单</Text>
+                    <Text style={styles.button}>排行榜单</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Play List")}
@@ -39,9 +39,9 @@ export default class MyHome extends Component {
                     <Text style={styles.button}>音乐播放器</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("test")}
+                onPress={() => this.props.navigation.navigate("Collection")}
                 >
-                    <Text style={styles.button}>test</Text>
+                    <Text style={styles.button}>我的收藏</Text>
                 </TouchableOpacity>
             </View>
         );
