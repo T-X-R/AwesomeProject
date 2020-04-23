@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SQLiteStorage from 'react-native-sqlite-storage';
+import Reactotron from 'reactotron-react-native'
 
 SQLiteStorage.DEBUG(true);
 var database_name = "AwesomeProject.db";//数据库文件
@@ -11,25 +12,29 @@ var db;
 export default class SQLite extends Component {
     //初始化数据库
     initDB(){
+        config = {
+            name: 'my.db', location: 'default'
+        };
+
         db = SQLiteStorage.openDatabase(
             database_name,
             database_version,
             database_displayname,
             database_size,
             ()=>{
-                console.log("Database started successfully...")
+                Reactotron.log("Database started successfully...")
             },(err)=>{
-                console.log(err)
+                Reactotron.log(err)
             });
         return db;
     }
     //关闭数据库
     closeDB(){
         if(db){
-            console.log('close');
+            Reactotron.log('close');
             db.close();
         }else {
-            console.log("Database close failed...");
+            Reactotron.log("Database close failed...");
         }
     }
     //新建数据表
@@ -44,15 +49,15 @@ export default class SQLite extends Component {
                 [],
                 () => {
                     // callBack && callBack(true)
-                    console.log("Execute progress success...")
+                    Reactotron.log("Execute progress success...")
                 },(err) => {
                     // callBack && callBack(false, err)
-                    console.log("Execute progress failed..." + err)
+                    Reactotron.log("Execute progress failed..." + err)
             })
         },(err) => {
-            console.log("Transaction progress error..." + err)
+            Reactotron.log("Transaction progress error..." + err)
         },() => {
-            console.log("Transaction progress success...")
+            Reactotron.log("Transaction progress success...")
         })
     }
     //插入or更新数据
@@ -64,15 +69,15 @@ export default class SQLite extends Component {
                 Object.values(data),
                 () => {
                     // callBack && callBack(true)
-                    console.log(`Insert data to ${tableName} execute successfully...`)
+                    Reactotron.log(`Insert data to ${tableName} execute successfully...`)
                 },(err) => {
                     // callBack && callBack(false, err)
-                    console.log("Insert data execute error:" + err)
+                    Reactotron.log("Insert data execute error:" + err)
             })
         },(err) => {
-            console.log("Insert data transaction progress error:" + err)
+            Reactotron.log("Insert data transaction progress error:" + err)
         },() => {
-            console.log(`Insert data to ${tableName} transaction progress success...`)
+            Reactotron.log(`Insert data to ${tableName} transaction progress success...`)
         })
     }
     //删除数据
@@ -84,15 +89,15 @@ export default class SQLite extends Component {
                 [],
                 () => {
                     callBack && callBack(true)
-                    console.log(`Delete data from ${tableName} execute success...`)
+                    Reactotron.log(`Delete data from ${tableName} execute success...`)
                 },(err) => {
                     callBack && callBack(false, err)
-                    console.log("Delete data execute error:" + err)
+                    Reactotron.log("Delete data execute error:" + err)
             })
         },(err) => {
-            console.log("Delete data transaction progress error:" + err)
+            Reactotron.log("Delete data transaction progress error:" + err)
         },() => {
-            console.log(`Delete data from ${tableName} transaction progress success...`)
+            Reactotron.log(`Delete data from ${tableName} transaction progress success...`)
         })
     }
     //查找数据
@@ -109,15 +114,15 @@ export default class SQLite extends Component {
                         data.push(outcome)
                     }
                     callBack && callBack(true, data)
-                    console.log(`Select data from ${tableName} execute success...`)
+                    Reactotron.log(`Select data from ${tableName} execute success...`)
                 },(err) => {
                     callBack && callBack(false, err)
-                    console.log("Select data execute error:" + err)
+                    Reactotron.log("Select data execute error:" + err)
             })
         },(err) => {
-            console.log("Select data transaction progress error:" + err)
+            Reactotron.log("Select data transaction progress error:" + err)
         },() => {
-            console.log(`Select data from ${tableName} transaction progress success...`)
+            Reactotron.log(`Select data from ${tableName} transaction progress success...`)
         })
     }
     //删除表
@@ -129,15 +134,15 @@ export default class SQLite extends Component {
                 [],
                 (tx,results) => {
                     callBack && callBack(true)
-                    console.log(`Drop ${tableName} execute success...`)
+                    Reactotron.log(`Drop ${tableName} execute success...`)
                 },(err) => {
                     callBack && callBack(false, err)
-                    console.log("Drop table execute error:" + err)
+                    Reactotron.log("Drop table execute error:" + err)
             })
         },(err) => {
-            console.log("Drop table transaction progress error:" + err)
+            Reactotron.log("Drop table transaction progress error:" + err)
         },() => {
-            console.log(`Drop ${tableName} transaction progress success...`)
+            Reactotron.log(`Drop ${tableName} transaction progress success...`)
         })
     }
 
