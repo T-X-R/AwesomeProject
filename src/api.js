@@ -20,7 +20,7 @@ export const PLAYLIST_DETAIL = BASE_URL + '/playlist/detail?id=';
 // 获取歌词
 export const MUSIC_LYRIC = BASE_URL + '/lyric?id=';
 // 获取榜单
-export const TOP_LIST = BASE_URL + '/toplist';
+export const TOP_LIST = BASE_URL + '/toplist/detail';
 
 /* qq音乐api */
 const BASE_URL2 = 'http://localhost:3200';
