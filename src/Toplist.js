@@ -11,7 +11,6 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
-// import Dropdownmenu from 'react-native-dropdownmenus';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import { TOP_LIST } from '../src/api';
 import { PLAYLIST_DETAIL } from '../src/api';
@@ -62,7 +61,7 @@ class TopMusic extends Component {
                         <View style={styles.container3}>
                             {/* <Text style={styles.text} numberOfLines={1}>1. {item.tracks[0].first} - {item.tracks[0].second}</Text>  */}
                             {/* <Text></Text> */}
-                            <Text style={styles.text} numberOfLines={1}>{item.description}</Text> 
+                            <Text style={styles.text} numberOfLines={1}>{item.updateFrequency}</Text> 
                             {/* <Text></Text> */}
                             {/* <Text style={styles.text} numberOfLines={1}>3. {item.songList[2].songname} - {item.songList[2].singername}</Text>  */}
                         </View>   
