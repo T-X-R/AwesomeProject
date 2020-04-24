@@ -12,11 +12,13 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
+
 import SQLite from '../SQLite';
-var s = new SQLite();
-var userName;
-var phone;
-var pwd;
+import Reactotron from "reactotron-react-native";
+
+let sqlite = new SQLite();
+sqlite.initDB();
+sqlite.createTable();
 
 export default class SignUp extends Component {
   static navigationOptions = {
@@ -24,15 +26,17 @@ export default class SignUp extends Component {
   };
 
   
-  constructor(props){
-      super(props);
-      this.state = {
+    constructor(props){
+        super(props);
+        this.state = {
             userName: '',
             phone: '',
             pwd: '',
             conpwd: '',
         };
-      }
+
+        this.createUser = this.createUser.bind(this);
+    }
   
   updateTextInput = (text, field) => {
     const state = this.state
@@ -42,18 +46,15 @@ export default class SignUp extends Component {
   
   createUser() {
       if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd) {
-
-        s.initDB();
-        s.createTable();
         //   var userData = [];
         let user={
             userName: this.state.userName,
             phone: this.state.phone,
             pwd: this.state.pwd,
         }
+        Reactotron.log(user);
         //   userData.push(user)
-        s.insertData(this.userInfo, user)
-        s.closeDB();
+        sqlite.insertData("USER", user)
       }
       //Todo
    }
