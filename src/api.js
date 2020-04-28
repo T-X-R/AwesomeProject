@@ -2,7 +2,7 @@
 const BASE_URL = 'http://localhost:3000';
 // 登录
 export const LOGIN = BASE_URL + '/login/cellphone?phone=15210138579&password=12qwaszx12TXR';
-// export const LOGIN = BASE_URL + '/login/cellphone';
+// export const LOGIN = BASE_URL + '/login/cellphone?';
 // 搜索歌曲
 export const SEARCH_MUSIC = BASE_URL + '/search?keywords=';
 // 音乐是否可用

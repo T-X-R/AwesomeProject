@@ -17,8 +17,14 @@ import { MUSIC_DETAIL } from '../src/api';
 import { MUSIC_LYRIC } from '../src/api';
 import { SEARCH_MUSIC2 } from '../src/api';
 import { MUSIC_LYRIC2 } from '../src/api';
+import SQLite from '../SQLite';
+import Reactotron from "reactotron-react-native";
+
 var myAnimate;
 var lyrObj = [];
+let sqlite = new SQLite();
+sqlite.initDB();
+sqlite.createCollectTable();
  
  
 export default class MusicPlayer extends Component{
@@ -28,6 +34,7 @@ export default class MusicPlayer extends Component{
         this.player = ''
         this.state = {
             musicId: this.props.route.params.musicId,
+            musicName: this.props.route.params.musicName,
             code: this.props.route.params.code,
             musicUrl: this.props.route.params.url,
             paused: false,
@@ -108,12 +115,21 @@ export default class MusicPlayer extends Component{
         }
     }
 
-    collectMusic(){
-        this.props.navigation.navigate("Collection",{
-            id: this.state.musicId,
-            url: this.state.musicUrl,
-            c: this.state.code,
-        });
+    collectMusic() {
+        // if(sqlite.selectExactData("COLLECT", musicId, this.state.musicId, callback) == null){
+        let music={
+            musicId: this.state.musicId,
+            musicName: this.state.musicName,
+            playUrl: this.state.musicUrl,
+            code: this.state.code,
+        }
+        Reactotron.log(this.state.musicId);
+        sqlite.insertData("COLLECT", music)
+        alert("收藏成功！")
+        // } else{
+            // Reactotron.log(this.state.musicId);
+            // alert("该歌曲已收藏")
+        // }
     }
 
     renderItem() {

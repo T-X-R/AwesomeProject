@@ -31,7 +31,7 @@ export default class MyHome extends Component {
                 <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Music")}
                 >
-                    <Text style={styles.button}>我的音乐</Text>
+                    <Text style={styles.button}>音乐搜索</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Music Player")}

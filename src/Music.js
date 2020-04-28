@@ -14,6 +14,7 @@ import {
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import { SEARCH_MUSIC } from '../src/api';
 import { CHECK_MUSIC } from '../src/api';
+import { MUSIC_DETAIL } from '../src/api';
 import { SEARCH_MUSIC2 } from '../src/api';
 import { MUSIC_DETAIL2 } from '../src/api';
 import { MUSIC_VKEY } from '../src/api';
@@ -25,6 +26,7 @@ class MusicElement extends Component {
         this.state = {
             isSelect: false,
             checkUrl: false,
+            imgUrl: '',
         }
         this.selectMusic = this.selectMusic.bind(this);
         this.playMusic=this.playMusic.bind(this);
@@ -42,15 +44,17 @@ class MusicElement extends Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const item = this.props.item;
-        this.checkMusic(item.id);
+        await this.getMusicDetaill(item.id)
+        await this.checkMusic(item.id);
     }
 
-    playMusic(id){
+    playMusic(item){
         if(this.state.checkUrl == true){
             this.props.navigation.navigate("Music Player",{
-                musicId: id,
+                musicId: item.id,
+                musicName: item.name,
                 code: 1,
                 url: '',
             });
@@ -81,21 +85,43 @@ class MusicElement extends Component {
         }
     };
 
+    async getMusicDetaill(id){
+        let url = MUSIC_DETAIL + id;
+        try{
+            const res3 = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            const parsedResult3 = await res3.json();
+            let getImgUrl = parsedResult3.songs[0].al.picUrl;
+            this.setState({
+                imgUrl: getImgUrl,
+            });
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        }
+    };
+
     render() {
         const item = this.props.item;
 
         return (
             <View>
-                <TouchableOpacity onPress = {()=> this.playMusic(item.id)}>
-                    <View>
-                        <Text style={styles.text}>{item.id}</Text>
-                        <Text style={styles.text}>{item.name}</Text>
-                        {/* <Text style={styles.text}>{item.artists.name}</Text> */}
-                        <Text style={styles.text}>音乐是否可用：{JSON.stringify(this.state.checkUrl)}</Text>
-                        <Text style={styles.text}>选中状态：{JSON.stringify(this.state.isSelect)}</Text>
-                        <Text></Text>
+                <TouchableOpacity onPress = {()=> this.playMusic(item)}>
+                    <View style={styles.container2}>
+                        <Image source={{url: this.state.imgUrl}} style={styles.imageStyle}/>
+                        <View style={styles.container3}>
+                            <Text style={styles.text} numberOfLines={1}>歌曲名：{item.name}</Text>
+                            <Text style={styles.text} numberOfLines={1}>作者：{item.artists[0].name}</Text>
+                            <Text style={styles.text} numberOfLines={1}>专辑：{item.album.name}</Text>
+                            <Text style={styles.text} numberOfLines={1}>{item.alias[0]}</Text>
+                        </View>   
                     </View>
                 </TouchableOpacity>
+                <Text></Text>
             </View>
         )
     }
@@ -108,6 +134,8 @@ class MusicElement2 extends Component {
         this.state = {
             isSelect2: false,
             playUrl: '',
+            checkVkey: '',
+            imgUrl2: '',
         }
         this.selectMusic2 = this.selectMusic2.bind(this);
         this.playMusic2=this.playMusic2.bind(this);
@@ -130,24 +158,17 @@ class MusicElement2 extends Component {
         this.getMusicUrl(item.mid);
     }
 
-    // playMusic2(id){
-    //     if(this.state.checkUrl2 == true){
-    //         this.props.navigation.navigate("Music Player",{
-    //             musicId: id,
-    //         });
-    //         // alert(id);
-    //     } else{
-    //         alert('没有版权!');
-    //     }
-    // }
-
     playMusic2(item){
-
-        this.props.navigation.navigate("Music Player",{
-            musicId: item.mid,
-            code: 2,
-            url: this.state.playUrl,
-        });
+        if(this.state.checkVkey != ''){
+            this.props.navigation.navigate("Music Player",{
+                musicId: item.mid,
+                musicName: item.name,
+                code: 2,
+                url: this.state.playUrl,
+            });
+        } else if(this.state.checkVkey == ''){
+            alert('需要Vip登录!');
+        }
            
     }
     
@@ -162,8 +183,10 @@ class MusicElement2 extends Component {
             });
             const parsedResult3 = await res3.json();
             let constantData3 = parsedResult3.response.playLists[0];
+            let checkUrlData = parsedResult3.response.req_0.data.midurlinfo[0].vkey;
             this.setState({
                 playUrl: constantData3,
+                checkVkey: checkUrlData,
             });
         } catch (err) {
             alert(err);
@@ -177,15 +200,17 @@ class MusicElement2 extends Component {
         return (
             <View>
                 <TouchableOpacity onPress = {()=> this.playMusic2(item)}>
-                    <View>
-                        <Text style={styles.text}>{item.mid}</Text>
-                        <Text style={styles.text}>{item.name}</Text>
-                        <Text style={styles.text}>{this.state.playUrl}</Text>
-                        {/* <Text style={styles.text}>{item.artists.name}</Text> */}
-                        <Text style={styles.text}>选中状态：{JSON.stringify(this.state.isSelect2)}</Text>
-                        <Text></Text>
+                    <View style={styles.container2}>
+                        <Image source={require('../pic/music.jpg')} style={styles.imageStyle}/>
+                        <View style={styles.container3}>
+                            <Text style={styles.text} numberOfLines={1}>歌曲名：{item.name}</Text>
+                            <Text style={styles.text} numberOfLines={1}>作者：{item.singer[0].name}</Text>
+                            <Text style={styles.text} numberOfLines={1}>专辑：{item.album.title}</Text>
+                            <Text style={styles.text} numberOfLines={1}>{item.subtitle}</Text>
+                        </View>   
                     </View>
                 </TouchableOpacity>
+                <Text></Text>
             </View>
         )
     }
@@ -327,7 +352,13 @@ const styles = StyleSheet.create({
     },
     container2: {
         flexDirection:'row',
-        marginBottom: 10,
+        // marginBottom: 10,
+    },
+    container3: {
+        flexDirection:'column',
+        marginLeft: 35,
+        justifyContent: 'center',
+        width: 200,
     },
     text:{
         color: 'white',
@@ -363,5 +394,11 @@ const styles = StyleSheet.create({
     icon: {
         marginTop: 20,
         marginLeft: 15,
+    },
+    imageStyle:{
+        width: 160,
+        height:160,
+        borderRadius: 5,
+        left: 12,
     }
 })

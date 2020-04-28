@@ -88,25 +88,18 @@ export default class PlayList extends Component{
     render(){
         return(
             <View style={styles.container}>
-                <Text style={styles.text}>{this.state.id}</Text>
-                <ScrollView style={styles.scroll}>
-                {/* <Text style={styles.text}>{JSON.stringify(this.state.dataSource)}</Text> */}
-                <FlatList
-                    data={this.state.playList}
-                    renderItem={({item})=>
-                    <View>
-                        <Text style={styles.text}>{item.name}</Text>
-                        {/* <Text style={styles.text}>{item.id}</Text> */}
-                    </View>
-                    }
-                    // refreshControl={
-                    //     <RefreshControl
-                    //     refreshing = {this.state.refreshing}
-                    //     onRefresh={this._onRefresh.bind(this)}
-                    //     />
-                    // }
-                />
-                </ScrollView>
+                    <FlatList
+                        data={this.state.playList}
+                        renderItem={({item})=>
+                            <TouchableOpacity>
+                                <View style={styles.container2}>
+                                    <Text></Text>
+                                    <Text style={styles.text}>{item.name}</Text>
+                                    <Text></Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
+                    />
             </View>
         );
     }
@@ -120,8 +113,12 @@ const styles = StyleSheet.create({
     //   justifyContent: 'center',
       backgroundColor: '#1A2225',
     },
+    container2: {
+      left: 25,
+      top: 20,
+    },
     text:{
         color: 'white',
-        fontSize: 15,
+        fontSize: 16,
     },
 })

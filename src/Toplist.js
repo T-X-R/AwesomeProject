@@ -59,11 +59,7 @@ class TopMusic extends Component {
                     <View style={styles.container2}>
                         <Image source={{url: item.coverImgUrl}} style={styles.imageStyle}/>
                         <View style={styles.container3}>
-                            {/* <Text style={styles.text} numberOfLines={1}>1. {item.tracks[0].first} - {item.tracks[0].second}</Text>  */}
-                            {/* <Text></Text> */}
-                            <Text style={styles.text} numberOfLines={1}>{item.updateFrequency}</Text> 
-                            {/* <Text></Text> */}
-                            {/* <Text style={styles.text} numberOfLines={1}>3. {item.songList[2].songname} - {item.songList[2].singername}</Text>  */}
+                            <Text style={styles.text} numberOfLines={3}>{item.description}</Text> 
                         </View>   
                     </View>
                 </TouchableOpacity>

@@ -37,15 +37,39 @@ export default class SQLite extends Component {
             Reactotron.log("Database close failed...");
         }
     }
-    //新建数据表
-    createTable() {
+    //新建用户数据表
+    createUserTable() {
         db.transaction((tx) => {
             tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS USER(' +
-                'id INTEGER PRIMARY KEY  AUTOINCREMENT,' +
+                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
                 'userName varchar,'+
                 'phone VARCHAR,' +
                 'pwd VARCHAR)',
+                [],
+                () => {
+                    // callBack && callBack(true)
+                    Reactotron.log("Execute progress success...")
+                },(err) => {
+                    // callBack && callBack(false, err)
+                    Reactotron.log("Execute progress failed..." + err)
+            })
+        },(err) => {
+            Reactotron.log("Transaction progress error..." + err)
+        },() => {
+            Reactotron.log("Transaction progress success...")
+        })
+    }
+    //新建收藏数据表
+    createCollectTable() {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS COLLECT(' +
+                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+                'musicId varchar,'+
+                'musicName VARCHAR,' +
+                'playUrl VARCHAR,' +
+                'code VARCHAR)',
                 [],
                 () => {
                     // callBack && callBack(true)
@@ -81,17 +105,17 @@ export default class SQLite extends Component {
         })
     }
     //删除数据
-    deleteData(tableName, key, value, callBack){
+    deleteData(tableName, key, value){
         let sql = `DELETE FROM ${tableName} WHERE ${key} = ${value}`
         db.transaction((tx) => {
             tx.executeSql(
                 sql,
                 [],
                 () => {
-                    callBack && callBack(true)
+                    // callBack && callBack(true)
                     Reactotron.log(`Delete data from ${tableName} execute success...`)
                 },(err) => {
-                    callBack && callBack(false, err)
+                    // callBack && callBack(false, err)
                     Reactotron.log("Delete data execute error:" + err)
             })
         },(err) => {
@@ -100,8 +124,8 @@ export default class SQLite extends Component {
             Reactotron.log(`Delete data from ${tableName} transaction progress success...`)
         })
     }
-    //查找数据
-    selectData(tableName, callBack){
+    //查找所有数据
+    selectData(tableName){
         let sql = `SELECT * FROM ${tableName}`
         db.transaction((tx) => {
             tx.executeSql(
@@ -113,10 +137,12 @@ export default class SQLite extends Component {
                         let outcome = result.rows.item(i);
                         data.push(outcome)
                     }
-                    callBack && callBack(true, data)
+                    // callBack && callBack(true, data)
                     Reactotron.log(`Select data from ${tableName} execute success...`)
+                    Reactotron.log(tx)
+                    Reactotron.log(result)
                 },(err) => {
-                    callBack && callBack(false, err)
+                    // callBack && callBack(false, err)
                     Reactotron.log("Select data execute error:" + err)
             })
         },(err) => {
@@ -124,6 +150,29 @@ export default class SQLite extends Component {
         },() => {
             Reactotron.log(`Select data from ${tableName} transaction progress success...`)
         })
+    }
+    //精确查找
+    selectExactData(tableName, key, value, callBack){
+        let sql = `SELECT * FROM ${tableName} WHERE ${key} = ${value}`
+        db.transaction((tx) => {
+            tx.executeSql(
+            sql,
+            [],
+            (tx,results) => {
+                callBack && callBack(true, results.rows.item(0))
+                Reactotron.log(`select exact data from ${tableName} success...`)
+            },
+            (err) => {
+                callBack && callBack(false, err)
+                Reactotron.log('select exact data error:' + err)
+            })
+            },
+            (err) => {
+            Reactotron.log('select exact data transaction error:' + err)
+            },
+            () => {
+            Reactotron.log(`select exact data from ${tableName} transaction success...`)
+            })
     }
     //删除表
     dropTable(tableName, callBack){

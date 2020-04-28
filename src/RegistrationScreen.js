@@ -18,14 +18,13 @@ import Reactotron from "reactotron-react-native";
 
 let sqlite = new SQLite();
 sqlite.initDB();
-sqlite.createTable();
+sqlite.createUserTable();
 
 export default class SignUp extends Component {
-  static navigationOptions = {
-    header: null,
-  };
+    static navigationOptions = {
+        header: null,
+    };
 
-  
     constructor(props){
         super(props);
         this.state = {
@@ -34,84 +33,83 @@ export default class SignUp extends Component {
             pwd: '',
             conpwd: '',
         };
-
         this.createUser = this.createUser.bind(this);
     }
   
-  updateTextInput = (text, field) => {
-    const state = this.state
-    state[field] = text;
-    this.setState(state);
-  }
+    updateTextInput = (text, field) => {
+        const state = this.state
+        state[field] = text;
+        this.setState(state);
+    }
   
-  createUser() {
-      if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd) {
-        //   var userData = [];
-        let user={
-            userName: this.state.userName,
-            phone: this.state.phone,
-            pwd: this.state.pwd,
+    createUser() {
+        if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd) {
+            //   var userData = [];
+            let user={
+                userName: this.state.userName,
+                phone: this.state.phone,
+                pwd: this.state.pwd,
+            }
+            Reactotron.log(user);
+            //   userData.push(user)
+            sqlite.insertData("USER", user)
         }
-        Reactotron.log(user);
-        //   userData.push(user)
-        sqlite.insertData("USER", user)
-      }
-      //Todo
-   }
+        //Todo
+    }
 
-  render() {
-    return (
-        <TouchableOpacity 
-            onPress={() => { Keyboard.dismiss(); }} 
-            activeOpacity={1} style={{flex: 1}}>
-            <KeyboardAvoidingView style={styles.container} behavior="padding">
-                <View style={styles.container}>
-                    
-                    <Text style={styles.txtUser}>用户名</Text>
-                    <TextInput
-                    style={styles.inputA}
-                    placeholder="请输入用户名"
-                    placeholderTextColor="#fff"
-                    value={this.state.userName}
-                    // onChangeText={this.userChange}
-                    onChangeText={(text) => this.updateTextInput(text, 'userName')}
-                    />
+    render() {
+        return (
+            <TouchableOpacity 
+                onPress={() => { Keyboard.dismiss(); }} 
+                activeOpacity={1} style={{flex: 1}}>
+                <KeyboardAvoidingView style={styles.container} behavior="padding">
+                    <View style={styles.container}>
+                        
+                        <Text style={styles.txtUser}>用户名</Text>
+                        <TextInput
+                        style={styles.inputA}
+                        placeholder="请输入用户名"
+                        placeholderTextColor="#fff"
+                        value={this.state.userName}
+                        // onChangeText={this.userChange}
+                        onChangeText={(text) => this.updateTextInput(text, 'userName')}
+                        />
 
-                    <Text style={styles.txtPhone}>手机号</Text>
-                    <TextInput
-                    style={styles.inputA}
-                    placeholder="请输入手机号"
-                    placeholderTextColor="#fff"
-                    // onChangeText={this.phoneChange}
-                    onChangeText={(text) => this.updateTextInput(text, 'phone')}
-                    />
+                        <Text style={styles.txtPhone}>手机号</Text>
+                        <TextInput
+                        style={styles.inputA}
+                        placeholder="请输入手机号"
+                        placeholderTextColor="#fff"
+                        // onChangeText={this.phoneChange}
+                        onChangeText={(text) => this.updateTextInput(text, 'phone')}
+                        />
 
-                    <Text style={styles.txtPwd}>密码</Text>
-                    <TextInput
-                    style={styles.inputB}
-                    placeholder="请输入密码"
-                    secureTextEntry={true}
-                    placeholderTextColor="#fff"
-                    // onChangeText={this.pwdChange}
-                    onChangeText={(text) => this.updateTextInput(text, 'pwd')}
-                    />
+                        <Text style={styles.txtPwd}>密码</Text>
+                        <TextInput
+                        style={styles.inputB}
+                        placeholder="请输入密码"
+                        secureTextEntry={true}
+                        placeholderTextColor="#fff"
+                        // onChangeText={this.pwdChange}
+                        onChangeText={(text) => this.updateTextInput(text, 'pwd')}
+                        />
 
-                    <Text style={styles.txtCon}>确认密码</Text>
-                    <TextInput
-                    style={styles.inputB}
-                    placeholder="请再次确认密码"
-                    secureTextEntry={true}
-                    placeholderTextColor="#fff"
-                    onChangeText={(text) => this.updateTextInput(text, 'conpwd')}
-                    />
-                    <TouchableOpacity onPress={() => this.createUser()}>
-                        <Text style={styles.buttonCreate}>创建账户</Text>
-                    </TouchableOpacity>
-                </View>
-            </KeyboardAvoidingView>
-        </TouchableOpacity>
-    );
-  }
+                        <Text style={styles.txtCon}>确认密码</Text>
+                        <TextInput
+                        style={styles.inputB}
+                        placeholder="请再次确认密码"
+                        secureTextEntry={true}
+                        placeholderTextColor="#fff"
+                        onChangeText={(text) => this.updateTextInput(text, 'conpwd')}
+                        />
+                        <TouchableOpacity onPress={() => this.createUser()}>
+                            <Text style={styles.buttonCreate}>创建账户</Text>
+                        </TouchableOpacity>
+                    </View>
+                </KeyboardAvoidingView>
+            </TouchableOpacity>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
