@@ -42,7 +42,7 @@ export default class MusicPlayer extends Component{
             slideValue: 0.0,
             currentTime: 0.0,
             currentIndex: 0,
-            playMode: 0,
+            // playMode: 0,
             playIcon: require('../pic/pause.png'),
             lyric: [],
         }
@@ -89,12 +89,12 @@ export default class MusicPlayer extends Component{
     
     spin() {
         this.spinValue.setValue(0)
-        myAnimate = Animated.timing(
+        myAnimate = Animated.timing( //动画呈线性变化
             this.spinValue,
             {
                 toValue: 1,
                 duration: 4000,
-                easing: Easing.linear
+                easing: Easing.linear //让数值随时间变化
             }
         ).start(() => this.spin())
     }
@@ -316,7 +316,6 @@ export default class MusicPlayer extends Component{
                         <Image source={require('../pic/like.png')} style={{ width:30, height:30, left:330, top: -5}}/>
                     </TouchableOpacity>
                 </View>
-
 
                 <View style={styles.lyricBar}>
                     <ScrollView 

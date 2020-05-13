@@ -235,21 +235,6 @@ export default class Music extends Component{
         this.setState(state);
     }
 
-    // async componentDidMount() {
-    //     // await fetchId()
-    //     // .then(res =>{
-    //     //     this.setState({
-    //     //         id: res.account.id,
-    //     //     });
-    //     // });
-    //     await this.searchMusic();
-    // }
-
-    // componentDidMount() {
-    //     this.searchMusic();
-    // }
-    
-
     async searchMusic(){
         let url = SEARCH_MUSIC + this.state.musicName;
         try{

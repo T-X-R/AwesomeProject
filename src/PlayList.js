@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { 
     Text, 
     View,
+    Image,
     StyleSheet,
     FlatList,
     ScrollView,
     TouchableOpacity,
     RefreshControl,
 } from 'react-native';
-// import { LOGIN } from '../src/api';
 import { fetchId } from '../src/GetId';
 import { USER_PLAYLIST } from '../src/api';
 
@@ -17,13 +17,11 @@ export default class PlayList extends Component{
         super(props);
         this.state = {
             isLoading: true,
-            // dataSource: [],
             id: [],
             playList: [],
         }
     }
 
-    
     async componentDidMount() {
         await fetchId()
         .then(res =>{
@@ -31,40 +29,10 @@ export default class PlayList extends Component{
                 id: res.account.id,
             });
         });
-        
         await this.fetchPlaylist();
     }
 
-
-
-    // componentDidMount() {
-    //     this.fetchPlaylist();
-    // }
-
-    // async fetchData() {
-    //     try {
-    //         const res = await fetch(LOGIN, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //         });
-    //         const parsedResult = await res.json();
-    //         let constantData = parsedResult.account.id;
-            
-
-    //         this.setState({
-    //             isLoading: false,
-    //             dataSource: constantData, 
-    //         });
-    //     } catch (err) {
-    //         alert(err);
-    //         console.error(err);
-    //     }
-    // };
-
     async fetchPlaylist(){
-        // let url = USER_PLAYLIST + this.state.dataSource;
         let url = USER_PLAYLIST + this.state.id;
         try{
             const res2 = await fetch(url, {
@@ -91,12 +59,21 @@ export default class PlayList extends Component{
                     <FlatList
                         data={this.state.playList}
                         renderItem={({item})=>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>{
+                                    this.props.navigation.navigate('网易云歌单', {
+                                        listId: item.id,
+                                    });
+                                }
+                            }>
                                 <View style={styles.container2}>
-                                    <Text></Text>
-                                    <Text style={styles.text}>{item.name}</Text>
-                                    <Text></Text>
+                                    <Image source={{url: item.coverImgUrl}} style={styles.imageStyle}/>
+                                    <View style={styles.container3}>
+                                        <Text style={styles.text} numberOfLines={1}>歌单：{item.name}</Text>
+                                        <Text/>
+                                        <Text style={styles.text} numberOfLines={1}>创建者：{item.creator.nickname}</Text>
+                                    </View>
                                 </View>
+                                <Text/>
                             </TouchableOpacity>
                         }
                     />
@@ -114,11 +91,23 @@ const styles = StyleSheet.create({
       backgroundColor: '#1A2225',
     },
     container2: {
-      left: 25,
-      top: 20,
+        top: 10,
+        flexDirection:'row',
+    },
+    container3: {
+        flexDirection:'column',
+        marginLeft: 50,
+        justifyContent: 'center',
+        width: 200,
     },
     text:{
         color: 'white',
         fontSize: 16,
     },
+    imageStyle:{
+        width: 160,
+        height:160,
+        borderRadius: 5,
+        left: 12,
+    }
 })

@@ -6,11 +6,12 @@ import StartUpPage from "./src/StartUpPage";
 import MyHome from "./src/MyHome";
 import Toplist from "./src/Toplist";
 import PlayList from "./src/PlayList";
-import Fans from "./src/Fans";
 import Music from "./src/Music";
 import MusicPlayer from "./src/MusicPlayer";
 import Collection from "./src/Collection";
-import ListInfo from "./src/ListInfo";
+import NeteaseListInfo from "./src/NeteaseListInfo";
+import QQListInfo from "./src/QQListInfo";
+import NeteasePlayList from "./src/NeteasePlayList";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -31,11 +32,12 @@ function MyStack() {
       <Stack.Screen name="My Home" component={MyHome} />
       <Stack.Screen name="Top List" component={Toplist} />
       <Stack.Screen name="Play List" component={PlayList} />
-      <Stack.Screen name="Fans" component={Fans} />
       <Stack.Screen name="Music" component={Music} />
-      <Stack.Screen name="Music Player" component={MusicPlayer} />
       <Stack.Screen name="Collection" component={Collection} />
-      <Stack.Screen name="List Info" component={ListInfo} />
+      <Stack.Screen name="List Info" component={NeteaseListInfo} />
+      <Stack.Screen name="QQ List Info" component={QQListInfo} />
+      <Stack.Screen name="网易云歌单" component={NeteasePlayList} />
+      <Stack.Screen name="Music Player" component={MusicPlayer} />
     </Stack.Navigator>
   );
 }

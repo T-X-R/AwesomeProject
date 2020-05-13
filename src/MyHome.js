@@ -24,19 +24,9 @@ export default class MyHome extends Component {
                     <Text style={styles.button}>我的歌单</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Fans")}
-                >
-                    <Text style={styles.button}>我的粉丝</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Music")}
                 >
                     <Text style={styles.button}>音乐搜索</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Music Player")}
-                >
-                    <Text style={styles.button}>音乐播放器</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Collection")}

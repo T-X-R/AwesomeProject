@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SQLiteStorage from 'react-native-sqlite-storage';
-import Reactotron from 'reactotron-react-native'
+import Reactotron from 'reactotron-react-native';
 
 SQLiteStorage.DEBUG(true);
 var database_name = "AwesomeProject.db";//数据库文件
@@ -66,7 +66,7 @@ export default class SQLite extends Component {
             tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS COLLECT(' +
                 'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-                'musicId varchar,'+
+                'musicId VARCHAR,'+
                 'musicName VARCHAR,' +
                 'playUrl VARCHAR,' +
                 'code VARCHAR)',
@@ -139,8 +139,8 @@ export default class SQLite extends Component {
                     }
                     // callBack && callBack(true, data)
                     Reactotron.log(`Select data from ${tableName} execute success...`)
-                    Reactotron.log(tx)
                     Reactotron.log(result)
+                    Reactotron.log(data)
                 },(err) => {
                     // callBack && callBack(false, err)
                     Reactotron.log("Select data execute error:" + err)

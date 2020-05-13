@@ -16,7 +16,6 @@ import { TOP_LIST } from '../src/api';
 import { PLAYLIST_DETAIL } from '../src/api';
 import { TOP_LIST2 } from '../src/api';
 
-var { h, w } =  Dimensions.get('window');
 
 class TopMusic extends Component {
     constructor(props){
@@ -78,48 +77,17 @@ class TopMusic2 extends Component {
         // this.playMusic=this.playMusic.bind(this);
     }
 
-    // componentDidMount() {
-    //     this.getToplist();
-    // }
-
-    // playMusic(id){
-    //     if(this.state.checkUrl == true){
-    //         this.props.navigation.navigate("Music Player",{
-    //             musicId: id,
-    //             code: 1,
-    //             url: '',
-    //         });
-    //     } else{
-    //         alert('没有版权!');
-    //     }
-    // }
-    
-    // async getToplist(){
-    //     // let url = CHECK_MUSIC + id;
-    //     try{
-    //         const res = await fetch(TOPLIST, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //         });
-    //         const parsedResult = await res.json();
-    //         let constantData = parsedResult.response.data.topList;
-    //         this.setState({
-    //             info: constantData,
-    //         });
-    //     } catch (err) {
-    //         alert(err);
-    //         console.error(err);
-    //     }
-    // };
-
     render() {
         const item = this.props.item;
 
         return (
             <View >
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                        this.props.navigation.navigate('QQ List Info', {
+                            songList: item.songList,
+                        });
+                    }
+                }>
                     <View style={styles.container2}>
                         <Image source={{url: item.picUrl}} style={styles.imageStyle}/>
                         <View style={styles.container3}>
@@ -152,7 +120,6 @@ export default class Toplist extends Component {
     }
 
     async getToplist(){
-        // let url = CHECK_MUSIC + id;
         try{
             const res = await fetch(TOP_LIST, {
             method: 'GET',
@@ -162,18 +129,15 @@ export default class Toplist extends Component {
             });
             const parsedResult = await res.json();
             let constantData = parsedResult.list;
-            // let constantData = parsedResult.list.tracks[0].first;
             this.setState({
                 dataSource: constantData,
             });
         } catch (err) {
-            alert(err);
             console.error(err);
         }
     };
 
     async getToplist2(){
-        // let url = CHECK_MUSIC + id;
         try{
             const resQ = await fetch(TOP_LIST2, {
             method: 'GET',
@@ -187,7 +151,6 @@ export default class Toplist extends Component {
                 dataSourceQ: constantDataQ,
             });
         } catch (err) {
-            alert(err);
             console.error(err);
         }
     };
@@ -213,7 +176,7 @@ export default class Toplist extends Component {
                         <FlatList
                             style={{top: 8}}
                             data={this.state.dataSourceQ}
-                            renderItem={({item}) => <TopMusic2 item={item} />}
+                            renderItem={({item}) => <TopMusic2 item={item} navigation={this.props.navigation}/>}
                         />
                     </View>
                 </ScrollableTabView>

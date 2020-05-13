@@ -43,7 +43,7 @@ export default class SignUp extends Component {
     }
   
     createUser() {
-        if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd) {
+        if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd != null) {
             //   var userData = [];
             let user={
                 userName: this.state.userName,
@@ -53,6 +53,8 @@ export default class SignUp extends Component {
             Reactotron.log(user);
             //   userData.push(user)
             sqlite.insertData("USER", user)
+            alert("注册成功");
+            this.props.navigation.navigate("Start");
         }
         //Todo
     }
@@ -64,7 +66,6 @@ export default class SignUp extends Component {
                 activeOpacity={1} style={{flex: 1}}>
                 <KeyboardAvoidingView style={styles.container} behavior="padding">
                     <View style={styles.container}>
-                        
                         <Text style={styles.txtUser}>用户名</Text>
                         <TextInput
                         style={styles.inputA}
@@ -74,7 +75,6 @@ export default class SignUp extends Component {
                         // onChangeText={this.userChange}
                         onChangeText={(text) => this.updateTextInput(text, 'userName')}
                         />
-
                         <Text style={styles.txtPhone}>手机号</Text>
                         <TextInput
                         style={styles.inputA}
@@ -83,7 +83,6 @@ export default class SignUp extends Component {
                         // onChangeText={this.phoneChange}
                         onChangeText={(text) => this.updateTextInput(text, 'phone')}
                         />
-
                         <Text style={styles.txtPwd}>密码</Text>
                         <TextInput
                         style={styles.inputB}
@@ -93,7 +92,6 @@ export default class SignUp extends Component {
                         // onChangeText={this.pwdChange}
                         onChangeText={(text) => this.updateTextInput(text, 'pwd')}
                         />
-
                         <Text style={styles.txtCon}>确认密码</Text>
                         <TextInput
                         style={styles.inputB}
