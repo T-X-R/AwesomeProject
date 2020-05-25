@@ -42,16 +42,14 @@ export default class SQLite extends Component {
         db.transaction((tx) => {
             tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS USER(' +
-                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-                'userName varchar,'+
-                'phone VARCHAR,' +
-                'pwd VARCHAR)',
+                'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' +
+                'userName VARCHAR NOT NULL,'+
+                'phone INTEGER NOT NULL,' +
+                'pwd VARCHAR NOT NULL)',
                 [],
                 () => {
-                    // callBack && callBack(true)
                     Reactotron.log("Execute progress success...")
                 },(err) => {
-                    // callBack && callBack(false, err)
                     Reactotron.log("Execute progress failed..." + err)
             })
         },(err) => {
@@ -65,11 +63,11 @@ export default class SQLite extends Component {
         db.transaction((tx) => {
             tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS COLLECT(' +
-                'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-                'musicId VARCHAR,'+
-                'musicName VARCHAR,' +
-                'playUrl VARCHAR,' +
-                'code VARCHAR)',
+                'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' +
+                'musicId VARCHAR NOT NULL,'+
+                'musicName VARCHAR NOT NULL,' +
+                'playUrl VARCHAR NOT NULL,' +
+                'code INTEGER NOT NULL)',
                 [],
                 () => {
                     // callBack && callBack(true)
@@ -92,10 +90,8 @@ export default class SQLite extends Component {
                 sql,
                 Object.values(data),
                 () => {
-                    // callBack && callBack(true)
                     Reactotron.log(`Insert data to ${tableName} execute successfully...`)
                 },(err) => {
-                    // callBack && callBack(false, err)
                     Reactotron.log("Insert data execute error:" + err)
             })
         },(err) => {
@@ -112,10 +108,8 @@ export default class SQLite extends Component {
                 sql,
                 [],
                 () => {
-                    // callBack && callBack(true)
                     Reactotron.log(`Delete data from ${tableName} execute success...`)
                 },(err) => {
-                    // callBack && callBack(false, err)
                     Reactotron.log("Delete data execute error:" + err)
             })
         },(err) => {
@@ -137,12 +131,10 @@ export default class SQLite extends Component {
                         let outcome = result.rows.item(i);
                         data.push(outcome)
                     }
-                    // callBack && callBack(true, data)
                     Reactotron.log(`Select data from ${tableName} execute success...`)
                     Reactotron.log(result)
                     Reactotron.log(data)
                 },(err) => {
-                    // callBack && callBack(false, err)
                     Reactotron.log("Select data execute error:" + err)
             })
         },(err) => {
@@ -152,18 +144,16 @@ export default class SQLite extends Component {
         })
     }
     //精确查找
-    selectExactData(tableName, key, value, callBack){
+    selectExactData(tableName, key, value){
         let sql = `SELECT * FROM ${tableName} WHERE ${key} = ${value}`
         db.transaction((tx) => {
             tx.executeSql(
             sql,
             [],
             (tx,results) => {
-                callBack && callBack(true, results.rows.item(0))
                 Reactotron.log(`select exact data from ${tableName} success...`)
             },
             (err) => {
-                callBack && callBack(false, err)
                 Reactotron.log('select exact data error:' + err)
             })
             },

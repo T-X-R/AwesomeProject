@@ -6,8 +6,6 @@ import {
   Image,
   Alert,
   TouchableOpacity,
-  Platform,
-  Dimensions,
   TextInput,
   Keyboard,
   KeyboardAvoidingView,
@@ -17,7 +15,8 @@ import SQLite from '../SQLite';
 import Reactotron from "reactotron-react-native";
 
 let sqlite = new SQLite();
-sqlite.initDB();
+var db;
+db = sqlite.initDB();
 sqlite.createUserTable();
 
 export default class SignUp extends Component {
@@ -44,19 +43,29 @@ export default class SignUp extends Component {
   
     createUser() {
         if (this.state.pwd == this.state.conpwd && this.state.userName != null && this.state.phone != null && this.state.pwd != null) {
-            //   var userData = [];
-            let user={
-                userName: this.state.userName,
-                phone: this.state.phone,
-                pwd: this.state.pwd,
-            }
-            Reactotron.log(user);
-            //   userData.push(user)
-            sqlite.insertData("USER", user)
-            alert("注册成功");
-            this.props.navigation.navigate("Start");
+            let sql = `SELECT * FROM USER WHERE phone = ${this.state.phone}`
+            var num = [];
+            db.executeSql(sql, [], (result) => {
+                for (let i = 0; i < result.rows.length; i++) {
+                    num.push(result.rows.item(i))
+                }
+                if(num.length == 0){
+                    let user={
+                        userName: this.state.userName,
+                        phone: this.state.phone,
+                        pwd: this.state.pwd,
+                    }
+                    Reactotron.log("长度：",num);
+                    sqlite.insertData("USER", user)
+                    alert("注册成功");
+                    this.props.navigation.navigate("Start");
+                } else{
+                    alert("该手机号已经注册！");
+                }
+            });
+        } else {
+            alert("注册信息输入有误！");
         }
-        //Todo
     }
 
     render() {
@@ -68,37 +77,42 @@ export default class SignUp extends Component {
                     <View style={styles.container}>
                         <Text style={styles.txtUser}>用户名</Text>
                         <TextInput
-                        style={styles.inputA}
-                        placeholder="请输入用户名"
-                        placeholderTextColor="#fff"
-                        value={this.state.userName}
-                        // onChangeText={this.userChange}
-                        onChangeText={(text) => this.updateTextInput(text, 'userName')}
+                            style={styles.inputA}
+                            placeholder="请输入用户名"
+                            placeholderTextColor="#fff"
+                            maxLength = {15}
+                            value={this.state.userName}
+                            onChangeText={(text) => this.updateTextInput(text, 'userName')}
                         />
                         <Text style={styles.txtPhone}>手机号</Text>
                         <TextInput
-                        style={styles.inputA}
-                        placeholder="请输入手机号"
-                        placeholderTextColor="#fff"
-                        // onChangeText={this.phoneChange}
-                        onChangeText={(text) => this.updateTextInput(text, 'phone')}
+                            style={styles.inputA}
+                            placeholder="请输入手机号"
+                            placeholderTextColor="#fff"
+                            maxLength = {11}
+                            // keyboardType='numeric'
+                            value={this.state.phone}
+                            onChangeText={(text) => {
+                                const newText = text.replace(/[^\d]+/, '');
+                                this.setState({phone: newText});
+                            }}
                         />
                         <Text style={styles.txtPwd}>密码</Text>
                         <TextInput
-                        style={styles.inputB}
-                        placeholder="请输入密码"
-                        secureTextEntry={true}
-                        placeholderTextColor="#fff"
-                        // onChangeText={this.pwdChange}
-                        onChangeText={(text) => this.updateTextInput(text, 'pwd')}
+                            style={styles.inputB}
+                            placeholder="请输入密码"
+                            secureTextEntry={true}
+                            maxLength = {20}
+                            placeholderTextColor="#fff"
+                            onChangeText={(text) => this.updateTextInput(text, 'pwd')}
                         />
                         <Text style={styles.txtCon}>确认密码</Text>
                         <TextInput
-                        style={styles.inputB}
-                        placeholder="请再次确认密码"
-                        secureTextEntry={true}
-                        placeholderTextColor="#fff"
-                        onChangeText={(text) => this.updateTextInput(text, 'conpwd')}
+                            style={styles.inputB}
+                            placeholder="请再次确认密码"
+                            secureTextEntry={true}
+                            placeholderTextColor="#fff"
+                            onChangeText={(text) => this.updateTextInput(text, 'conpwd')}
                         />
                         <TouchableOpacity onPress={() => this.createUser()}>
                             <Text style={styles.buttonCreate}>创建账户</Text>

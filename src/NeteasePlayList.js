@@ -14,8 +14,6 @@ import { PLAYLIST_DETAIL } from '../src/api';
 class MusicInfo extends Component{
     constructor(props){
         super(props);
-        this.state = {
-        }
         this.playMusic=this.playMusic.bind(this);
     }
 

@@ -34,7 +34,7 @@ function MyStack() {
       <Stack.Screen name="Play List" component={PlayList} />
       <Stack.Screen name="Music" component={Music} />
       <Stack.Screen name="Collection" component={Collection} />
-      <Stack.Screen name="List Info" component={NeteaseListInfo} />
+      <Stack.Screen name="Netease List Info" component={NeteaseListInfo} />
       <Stack.Screen name="QQ List Info" component={QQListInfo} />
       <Stack.Screen name="网易云歌单" component={NeteasePlayList} />
       <Stack.Screen name="Music Player" component={MusicPlayer} />

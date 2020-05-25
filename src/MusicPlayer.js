@@ -49,6 +49,12 @@ export default class MusicPlayer extends Component{
         this._scrollView = null;
     }
 
+    // static navigationOptions = ({navigation}) =>{
+    //     return{
+    //         headerTitle: this.props.route.params.musicName,
+    //     }
+    // }
+
     async componentDidMount() {
         await this.fetchMusicUrl();
         await this.fetchLyric();
@@ -103,7 +109,6 @@ export default class MusicPlayer extends Component{
         this.setState({
             pause: !this.state.pause
         })
-        //判断按钮显示什么
         if(this.state.pause == true){
             this.setState({
                 playIcon: require('../pic/pause.png')//播放
@@ -234,29 +239,20 @@ export default class MusicPlayer extends Component{
                     (\s*$) 的意思就是, 以0个空格或者多个空格结尾
                     /.../g  是正则表达式的属性, 表示全文匹配, 而不是找到一个就停止.
                 */ 
-                val = val.replace(/(^\s*)|(\s*$)/g, '')    //正则,去除前后空格并用空字符串代替
-                let indeofLastTime = val.indexOf(']')  // ]的下标
-                let timeStr = val.substring(1, indeofLastTime) //把时间切出来 0:04.19
+                val = val.replace(/(^\s*)|(\s*$)/g, '') 
+                let indeofLastTime = val.indexOf(']') 
+                let timeStr = val.substring(1, indeofLastTime)
                 let minSec = ''
-                let timeMsIndex = timeStr.indexOf('.')  // .的下标
+                let timeMsIndex = timeStr.indexOf('.')
                 minSec = timeStr.substring(1, val.indexOf('.'))
                 obj.ms = parseInt(timeStr.substring(timeMsIndex + 1, indeofLastTime))
-                // if (timeMsIndex !== -1) {
-                //     //存在毫秒 0:04.19
-                //     minSec = timeStr.substring(0, val.indexOf('.'))  // 0:04.
-                //     obj.ms = parseInt(timeStr.substring(timeMsIndex + 1, indeofLastTime))  //毫秒值 19
-                // } else {
-                //     //不存在毫秒 0:04
-                //     minSec = timeStr
-                //     obj.ms = 0
-                // }
-                let curTime = minSec.split(':')  // [0,04]
-                obj.m = parseInt(curTime[0])   //分钟 0
-                obj.s = parseInt(curTime[1])   //秒钟 04
+                let curTime = minSec.split(':')
+                obj.m = parseInt(curTime[0])
+                obj.s = parseInt(curTime[1])
                 obj.txt = val.substring(indeofLastTime + 1, val.length) 
                 obj.txt = obj.txt.replace(/(^\s*)|(\s*$)/g, '')
                 obj.dis = false
-                obj.total = obj.m * 60 + obj.s + obj.ms / 100   //总时间
+                obj.total = obj.m * 60 + obj.s + obj.ms / 100 
                 if (obj.txt.length > 0) {
                     lyrObj.push(obj)
                 }

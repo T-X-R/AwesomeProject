@@ -40,7 +40,7 @@ class TopMusic extends Component {
                 info: constantData,
             });
             
-            this.props.navigation.navigate("List Info",{
+            this.props.navigation.navigate("Netease List Info",{
                 listInfo: this.state.info,
             });
         } catch (err) {
@@ -51,7 +51,6 @@ class TopMusic extends Component {
 
     render() {
         const item = this.props.item;
-
         return (
             <View>
                 <TouchableOpacity onPress = {()=> this.getPlaylist(item.id)}>

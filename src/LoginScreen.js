@@ -9,8 +9,11 @@ import {
     KeyboardAvoidingView, 
 } from 'react-native';
 import SQLite from '../SQLite';
-var s = new SQLite();
+import Reactotron from "reactotron-react-native";
+
+let sqlite = new SQLite();
 var db;
+db = sqlite.initDB();
 
 export default class LoginScreen extends Component {
     constructor(props) {
@@ -22,24 +25,56 @@ export default class LoginScreen extends Component {
         };
     }
 
+    updateTextInput = (text, field) => {
+        const state = this.state
+        state[field] = text;
+        this.setState(state);
+    }
+
+    selectExactData(value1, value2){
+        Keyboard.dismiss();
+        let sql = `SELECT * FROM USER WHERE phone = ${value1}`
+        var num = [];
+        db.executeSql(sql, [], (result) => {
+            for (let i = 0; i < result.rows.length; i++) {
+                num.push(result.rows.item(i))
+            }
+            if(num.length == 0){
+                alert("手机号不存在！");
+            } else{
+                let checkPwd = num[0].pwd;
+                if(checkPwd == value2){
+                    alert("登录成功！");
+                    this.props.navigation.navigate("My Home"); 
+                } else{
+                    alert("用户名或密码不正确！");
+                }
+            }
+        });
+    }
+
     render() {
         return (
             <TouchableOpacity 
                 onPress={() => { Keyboard.dismiss(); }} 
                 activeOpacity={1} style={{flex: 1}}>
                 <KeyboardAvoidingView style={styles.container} behavior="padding">
-                    <Text style={styles.textId}>用户名</Text>
+                    <Text style={styles.textId}>手机号</Text>
                     <TextInput style={styles.inputId} 
                         placeholder="请输入手机号码" 
-                        placeholderTextColor = "#fff">
+                        placeholderTextColor = "#fff"
+                        onChangeText={(text) => this.updateTextInput(text, 'phoneNum')}
+                    >
                     </TextInput>
                     <Text style={styles.textPwd}>密码</Text>
                     <TextInput style={styles.inputPwd} 
                         secureTextEntry={true}
                         placeholder="请输入密码" 
-                        placeholderTextColor = "#fff">
+                        placeholderTextColor = "#fff"
+                        onChangeText={(text) => this.updateTextInput(text, 'pwd')}
+                    >
                     </TextInput>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate("My Home")}>
+                    <TouchableOpacity onPress={()=>this.selectExactData(this.state.phoneNum, this.state.pwd)}>
                         <Text style={styles.buttonLogin}>登录</Text>
                     </TouchableOpacity>
                 </KeyboardAvoidingView>

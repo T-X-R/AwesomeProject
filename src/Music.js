@@ -58,7 +58,6 @@ class MusicElement extends Component {
                 code: 1,
                 url: '',
             });
-            // alert(id);
         } else{
             alert('没有版权!');
         }
