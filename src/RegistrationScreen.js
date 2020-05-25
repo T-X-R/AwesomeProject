@@ -16,10 +16,6 @@ import {
 import SQLite from '../SQLite';
 import Reactotron from "reactotron-react-native";
 
-let sqlite = new SQLite();
-sqlite.initDB();
-sqlite.createUserTable();
-
 export default class SignUp extends Component {
     static navigationOptions = {
         header: null,
@@ -34,6 +30,12 @@ export default class SignUp extends Component {
             conpwd: '',
         };
         this.createUser = this.createUser.bind(this);
+    }
+
+    async componentDidMount() {
+        let sqlite = new SQLite();
+        await sqlite.initDB();
+        sqlite.createUserTable();
     }
   
     updateTextInput = (text, field) => {

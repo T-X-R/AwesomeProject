@@ -10,13 +10,8 @@ import {
 } from 'react-native'
 import SQLite from '../SQLite';
 import { MUSIC_DETAIL } from '../src/api';
-import { SEARCH_MUSIC } from '../src/api';
 import { MUSIC_DETAIL2 } from '../src/api';
-import Reactotron from "reactotron-react-native";
-
-let sqlite = new SQLite();
-var db;
-db = sqlite.initDB();
+import Reactotron from 'reactotron-react-native';
 
 class MyCollect extends Component{
     constructor(props){
@@ -117,63 +112,43 @@ class MyCollect extends Component{
 export default class Collection extends Component {
   constructor(props){
     super(props);
+    this.sqlite = new SQLite();
     this.state = {
       dataSource: [],
     }
   }
 
-// compennetDidUnmount(){
-//   sqlite.closeDB();
-// }
-
-// async componentDidMount(){
-//   // let results = sqlite.selectData("COLLECT");
-//   // sqlite.selectData("COLLECT")
-//   await this.selectM();
-// }
-// async componentDidMount() {
-//     try {
-//       const result = await db.executeSql("select * from COLLECT");
-//     } catch(error) {
-//       Reactotron.log(error);
-//       // debugger
-//     }
-//     // debugger
-//   }
-
-selectM(){
-  db.transaction((tx) => {
-      tx.executeSql('SELECT * FROM COLLECT', [], (tx, result) => {
-        for (let i = 0; i < result.rows.length; i++) {
-          this.state.dataSource.push(result.rows.item(i))
-        }
-        Reactotron.log(this.state.dataSource);
-      })
-    },(error)=>{
-      Reactotron.log(error);
+  async componentDidMount(){
+    this.setState({
+      dataSource: await this.selectM()
     });
-    return(
-      <FlatList
-          style={{top: 8}}
-          data={this.state.dataSource}
-          renderItem={({item}) => 
-            <MyCollect item={item} navigation={this.props.navigation}/>
-          }
-        />
-    )
-}
+  }
+
+  async selectM(){
+    var db;
+    db = await this.sqlite.initDB();
+
+    const sqlResult = await db.executeSql('SELECT * FROM COLLECT');
+    Reactotron.log(sqlResult)
+    const result = sqlResult[0].rows;
+    let songs = [];
+
+    for(i = 0; i < result.length; i++) {
+      songs.push(result.item(i))
+    }
+
+    return songs;
+  }
 
   render () {
     return (
       <View style={styles.container}>
-        {/* <FlatList
+        <FlatList
           style={{top: 8}}
           data={this.state.dataSource}
-          renderItem={({item}) => 
-            <MyCollect item={item} navigation={this.props.navigation}/>
+          renderItem={({item}) => <MyCollect item={item} navigation={this.props.navigation}/>
           }
-        /> */}
-          {this.selectM()}
+        />
       </View>
     )
 

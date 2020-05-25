@@ -22,16 +22,13 @@ import Reactotron from "reactotron-react-native";
 
 var myAnimate;
 var lyrObj = [];
-let sqlite = new SQLite();
-sqlite.initDB();
-sqlite.createCollectTable();
- 
  
 export default class MusicPlayer extends Component{
     constructor(props){
         super(props);
         this.spinValue = new Animated.Value(0);
-        this.player = ''
+        this.player = '';
+        this.sqlite = new SQLite();
         this.state = {
             musicId: this.props.route.params.musicId,
             musicName: this.props.route.params.musicName,
@@ -50,6 +47,9 @@ export default class MusicPlayer extends Component{
     }
 
     async componentDidMount() {
+        await this.sqlite.initDB();
+        this.sqlite.createCollectTable();
+
         await this.fetchMusicUrl();
         await this.fetchLyric();
         this.spin(); 
@@ -115,7 +115,7 @@ export default class MusicPlayer extends Component{
         }
     }
 
-    collectMusic() {
+    async collectMusic() {
         // if(sqlite.selectExactData("COLLECT", musicId, this.state.musicId, callback) == null){
         let music={
             musicId: this.state.musicId,
@@ -124,7 +124,16 @@ export default class MusicPlayer extends Component{
             code: this.state.code,
         }
         Reactotron.log(this.state.musicId);
-        sqlite.insertData("COLLECT", music)
+        // await this.sqlite.insertData("COLLECT", music)
+        let sql = `INSERT OR REPLACE INTO COLLECT (musicId,musicName,playUrl,code) VALUES (${music['musicId']}, '${music['musicName']}', '${music['playUrl']}', ${music['code']});`
+        const db = await this.sqlite.initDB();
+        try {
+            const result = await db.executeSql(sql)
+        } catch (err) {
+            Reactotron.log(err)
+            alert("收藏失败！")
+        }
+
         alert("收藏成功！")
         // } else{
             // Reactotron.log(this.state.musicId);
@@ -312,7 +321,7 @@ export default class MusicPlayer extends Component{
                     <TouchableOpacity onPress={() => this.musicPlay()}>
                         <Image source={this.state.playIcon} style={{ width:35, height:35, left:190 }}/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.collectMusic()}>
+                    <TouchableOpacity onPress={async () => await this.collectMusic()}>
                         <Image source={require('../pic/like.png')} style={{ width:30, height:30, left:330, top: -5}}/>
                     </TouchableOpacity>
                 </View>

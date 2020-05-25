@@ -57,7 +57,7 @@ export default class Fans extends Component {
     timer = setInterval(
         ()=>{
             this.fetchDetail();
-            Reactotron.log(fan);
+            // Reactotron.log(fan);
         },
     43200000);
 
@@ -77,7 +77,7 @@ export default class Fans extends Component {
                 fan.shift();
                 fan.push(constantData);
             }
-            Reactotron.log(fan)
+            // Reactotron.log(fan)
             
             // for (var i = 0; i < 5; i++) {
             //     fan.shift(); //删除数组第一个元素

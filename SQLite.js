@@ -3,6 +3,8 @@ import SQLiteStorage from 'react-native-sqlite-storage';
 import Reactotron from 'reactotron-react-native';
 
 SQLiteStorage.DEBUG(true);
+SQLiteStorage.enablePromise(true);
+
 var database_name = "AwesomeProject.db";//数据库文件
 var database_version = "1.0";//版本号
 var database_displayname = "MySQLite";
@@ -11,12 +13,12 @@ var db;
 
 export default class SQLite extends Component {
     //初始化数据库
-    initDB(){
+    async initDB(){
         config = {
             name: 'my.db', location: 'default'
         };
 
-        db = SQLiteStorage.openDatabase(
+        db = await SQLiteStorage.openDatabase(
             database_name,
             database_version,
             database_displayname,
@@ -86,7 +88,9 @@ export default class SQLite extends Component {
     }
     //插入or更新数据
     insertData(tableName, data){
-        let sql = `INSERT OR REPLACE INTO ${tableName} (${Object.keys(data).join(',')}) VALUES (${Array(Object.keys(data).length).fill('?').join(',')})`
+        Reactotron.log(data)
+        let sql = `INSERT OR REPLACE INTO ${tableName} (musicId,musicName,playUrl,code) VALUES (${data['musicId']}, '${data['musicName']}', '${data['playUrl']}', ${data['code']});`
+        Reactotron.log(sql);
         db.transaction((tx) => {
             tx.executeSql(
                 sql,

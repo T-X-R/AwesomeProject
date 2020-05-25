@@ -1,5 +1,5 @@
 /* 网易云音乐api */
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://music-proxies.herokuapp.com';
 // 登录
 export const LOGIN = BASE_URL + '/login/cellphone?phone=15210138579&password=12qwaszx12TXR';
 // export const LOGIN = BASE_URL + '/login/cellphone?';
@@ -23,7 +23,7 @@ export const MUSIC_LYRIC = BASE_URL + '/lyric?id=';
 export const TOP_LIST = BASE_URL + '/toplist/detail';
 
 /* qq音乐api */
-const BASE_URL2 = 'http://localhost:3200';
+const BASE_URL2 = 'https://qqmusic-proxy.herokuapp.com';
 // 搜索歌曲
 export const SEARCH_MUSIC2 = BASE_URL2 + '/getSearchByKey?key=';
 /// 获取音乐Vkey

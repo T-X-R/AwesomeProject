@@ -21,6 +21,7 @@ class MusicInfo extends Component{
 
     playMusic(item){
         this.props.navigation.navigate("Music Player",{
+            musicName: item.name,
             musicId: item.id,
             code: 1,
             url: '',
