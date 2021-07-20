@@ -17,7 +17,7 @@
     "@react-navigation/stack": "^5.0.5",
     "native-echarts": "^0.5.0",
     "react": "16.9.0",
-    "react-native": "^0.61.5",
+    "react-native": "^0.62.3",
     "react-native-axios": "^0.17.1",
     "react-native-dropdown": "0.0.6",
     "react-native-dropdownmenus": "^1.0.6",
